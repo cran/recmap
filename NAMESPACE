@@ -1,0 +1,8 @@
+useDynLib(recmap)
+import(Rcpp)
+
+export("recmap")
+export("plot_recmap")
+
+importFrom("graphics", "plot", "polygon", "rect", "text")
+importFrom("utils", "combn", "read.table")
