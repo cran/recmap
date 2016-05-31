@@ -25,13 +25,17 @@ DataFrame place_rectanle(double x0, double y0, double dx0, double dy0, double dx
 }
 
 // [[Rcpp::export]]
-DataFrame recmap(DataFrame df) {
+DataFrame recmap_(DataFrame df) {
+  
+  // TODO(cp): check if df contains all required columns
   
   // access the columns
   NumericVector x = df["x"];
   NumericVector y = df["y"];
   NumericVector dx = df["dx"];
   NumericVector dy = df["dy"];
+
+   
   NumericVector z = df["z"];
   CharacterVector name = df["name"];
   
@@ -43,17 +47,19 @@ DataFrame recmap(DataFrame df) {
   NumericVector dfs_num(x.size()); 
   NumericVector topology_error(x.size()); 
   NumericVector relpos_error(x.size()); 
+  NumericVector relpos_nh_error(x.size()); 
   //crecmap::crecmap X(Rcpp::as<double>(x));
   crecmap::RecMap X;
   
   // TODO(cp): setting and gettings are pain of the art; fix that asap;
-  for (int i=0; i<x.size(); i++){
+  for (int i = 0; i < x.size(); i++){
+  
     std::string sname = Rcpp::as<std::string>(name[i]);
-    X.push(x[i], y[i], dx[i], dy[i], z[i], sname);
+    X.push(x[i], y[i], dx[i], dy[i], z[i],  sname);
   }
   
   X.run();
-  
+  // Rcpp::Rcout << "Number of mbb intersection test calls =  " << X.get_intersect_count() << "\n";
   for (int i=0; i<x.size(); i++){
     crecmap::map_region r = X.get_map_region(i);
     
@@ -61,10 +67,11 @@ DataFrame recmap(DataFrame df) {
     cartogram_y[i] = r.y;
     cartogram_dx[i] = r.dx;
     cartogram_dy[i] = r.dy;
-    //z[i] = r.z;
+    
     dfs_num[i] = r.dfs_num;
     topology_error[i] = r.topology_error;
     relpos_error[i] = r.relative_position_error;
+    relpos_nh_error[i] = r.relative_position_neighborhood_error;
   }
 
   
@@ -77,20 +84,19 @@ DataFrame recmap(DataFrame df) {
                            _["y"]= cartogram_y,
                            _["dx"]= cartogram_dx, 
                            _["dy"]= cartogram_dy,
+                    
                            _["z"]= z, 
                            _["name"]= name, 
                            _["dfs.num"] = dfs_num,
                            _["topology.error"] = topology_error,
-                           _["relpos.error"] = relpos_error);
+                           _["relpos.error"] = relpos_error,
+                           _["relposnh.error"] = relpos_nh_error);
 }
 
 
 /*** R
-r <- recmap:::.checker_board(2)
-class(r) <- "data.frame"
-r2 <- recmap(r)
-#class(r2) <- "recmapFrame"
-#plot(r2)
+Map <- recmap:::.checker_board(2)
+Cartogram <- recmap(r)
 */
 
 // sourceCpp("./src/Rrecmap.cpp"); plot(r2)

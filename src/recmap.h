@@ -1,6 +1,7 @@
 //
-// This file is part of recmap.
-// 
+// This file is part of the recmap package on CRAN.
+// https://cran.r-project.org/web/packages/recmap/index.html
+//
 // recmap is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -14,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with recmap.  If not, see <http://www.gnu.org/licenses/>.
 
-//  Authors   :  Christian Panse <Christian.Panse@gmail.com> 
-//  2016-04-19/20/21/22 Bristol, UK
+//  Author:  Christian Panse <Christian.Panse@gmail.com> 
+//  2016-04-19/20/21/22 ACCU2016 Bristol, UK
 
 #ifndef RECMAP_H
 #define RECMAP_H
@@ -31,12 +32,11 @@
 #include <iterator>
 #include <sstream>
 #include <cmath>
-  
-
+#include <set>
   
 namespace crecmap{
 
-  // keeps map and pseudo dual
+  // keeps map and pseudo dual graph
   typedef struct {
     double x, y, dx, dy, z;
     int id;
@@ -46,24 +46,43 @@ namespace crecmap{
     std::vector<int> connected;
     double topology_error;
     double relative_position_error;
+    double relative_position_neighborhood_error;
     int dfs_num;
   } map_region;
 
+struct mbb_node {
+  double key;
+  int id;
+  
+  mbb_node(const double& strKey = 0, const int& intId = 0)
+    : key(strKey),
+      id(intId) {}
+  
+  bool operator<(const mbb_node& rhs) const {
+    return key < rhs.key;
+  }
+};
+
+  // use it as sorted list 
+  // insert/upper_bound: O(ln(n))
+  typedef struct {
+    double max_dx;
+    double max_dy;
+    std::multiset<mbb_node> x;
+    std::multiset<mbb_node> y;
+  } mbb_set;
+
  typedef std::vector<map_region> recmapvector; 
 
- 
   // http://en.cppreference.com/w/cpp/numeric/math/atan2
   double get_angle(const map_region &a, const map_region &b){
-    double dx = b.x - a.x;
-    double dy = b.y - a.y;
-    
-    double alpha = std::atan2(dx, dy);
+    double alpha = std::atan2(b.x - a.x, b.y - a.y);
     return (alpha);
   }
 
   // http://gamemath.com/2011/09/detecting-whether-two-boxes-overlap/
-  // TODO(cp): think of an eps value
-  bool mbb_check(const map_region &a, const map_region &b){
+  inline bool mbb_check(const map_region &a, const map_region &b){
+    
     if (a.x + a.dx < b.x - b.dx) return false; // a is left of b
     else if (a.x - a.dx > b.x + b.dx) return false; // a is right of b
     else if (a.y + a.dy < b.y - b.dy) return false; // a is above b
@@ -76,7 +95,8 @@ namespace crecmap{
   // computes the new x-y value on the cartogram map region c
   // map_region a has a fix position
   // uses c.dx and c.dy for computation
-  // TODO(cp): consider giving eps als argument
+  // TODO(cp): consider giving eps als argument 
+  //           to have space between the map regions
   void place_rectanle(const map_region &a, double alpha, map_region &c){
     double tanx, tany;
     double eps = 0.01;
@@ -132,29 +152,49 @@ namespace crecmap{
     } else {
       // error
       }
-      
   }
   
+  // http://stackoverflow.com/questions/17787410/nested-range-based-for-loops
+  template<typename C, typename Op1>
+  void each_unique_pair(C& container, Op1 fun1){
+    for(auto it = container.begin(); it != container.end() - 1; ++it)
+      for(auto it2 = std::next(it); it2 != container.end(); ++it2)
+        fun1(*it, *it2, container);
+  }
+  
+  template<typename C, typename C1, typename Op1>
+  void each_unique_pair2(C& container, C1& container1, Op1 fun2){
+    for(auto it = container.begin(); it != container.end() - 1; ++it)
+      for(auto it2 = std::next(it); it2 != container.end(); ++it2)
+        fun2(*it, *it2, container, container1);
+  }
   
   class RecMap{
     recmapvector Map;
     recmapvector Cartogram;
+    mbb_set MBB;
+    int intersect_count;
+    
     int num_regions;
     
     std::list<std::string> msg;
     std::list<std::string> warnings;
     
   public:
-  
-    //template < class Tdouble > 
-    
-    RecMap() { num_regions = 0;}
+    RecMap() { 
+        num_regions = 0;     
+        MBB.max_dx = 0;
+        MBB.max_dy = 0;
+        intersect_count = 0;
+        }
+
+    // TODO(cp): Think about  a destructor?
     
     void push(double x, double y, double dx, double dy, double z, std::string name){
       
       map_region R, R1; 
       
-      R.x=x; R.y=y; R.dx=dx; R.dy = dy; R.z =z;
+      R.x=x; R.y=y; R.dx=dx; R.dy = dy; R.z=z;
       R.id = num_regions;
       R.area_desired = -1;
       R.connected = {};
@@ -170,8 +210,6 @@ namespace crecmap{
       R1.name = name;
       R1.dfs_num = -1;
       R1.topology_error = 100;
-      // R.name = name;
-      // not needed for the algorithm
      
       Map.push_back(R);
       Cartogram.push_back(R1);
@@ -189,46 +227,30 @@ namespace crecmap{
     
     bool warnings_empty(){return warnings.empty();}
     
-    int get_size(){
-      return num_regions;
-    }
+    int get_size(){return num_regions;}
     
-    /*  TODO: Can that really work?
-     *  map_region& operator[](const int i){
-     * return (i * sizeof(map_region))}
-     */
-    map_region& get_map_region(int i){
-        return(Cartogram[i]);
-    }
+    int get_intersect_count(){ return intersect_count; }
     
-    // http://stackoverflow.com/questions/17787410/nested-range-based-for-loops
-    template<typename C, typename Op1>
-    void each_unique_pair(C& container, Op1 fun1){
-      for(auto it = container.begin(); it != container.end() - 1; ++it)
-        for(auto it2 = std::next(it); it2 != container.end(); ++it2)
-          fun1(*it, *it2, container);
-    }
-    
-    
+    map_region& get_map_region(int i){ return(Cartogram[i]); }
     
     void ComputePseudoDual(recmapvector &M){
       each_unique_pair(M, [this](map_region &a, map_region &b, recmapvector &M){
                          // add edges tp pseudo dual graph iff boxes are connected 
-                         if (mbb_check(a,b)){
+                         if ( mbb_check(a,b) ){
                            M[a.id].connected.push_back(b.id);
                            M[b.id].connected.push_back(a.id);
                          }
                        });
     }
     
-
     // taken from the CartoDraw scanline approach date back to yr2000
     void ComputeDesiredArea(recmapvector &M, recmapvector &C){
       double sum_z = 0.0;
       double sum_area = 0.0;
       
       std::for_each(M.begin(), M.end(), [&] (map_region &r) {sum_z += r.z;});
-      std::for_each(M.begin(), M.end(), [&] (map_region &r) {sum_area += (4 * r.dx * r.dy);});
+      std::for_each(M.begin(), M.end(), 
+                    [&] (map_region &r) {sum_area += (4 * r.dx * r.dy);});
       
       std::for_each(C.begin(), C.end(), [&] (map_region &r) {
         double area_desired = r.z * sum_area / sum_z;
@@ -239,7 +261,10 @@ namespace crecmap{
     }
     
     
-    // TODO(cp): has to be implemented
+    // TODO(cp): Is the original core polygon implementation really usefull?
+    //           the 8x8 checker board suffers but for the x77 map it seems 
+    //           to work great
+    //           if yes; implement it here.
     int ComputeCoreRegion(recmapvector &M, recmapvector &C){
       
       int core_region_id = num_regions / 2;
@@ -247,51 +272,111 @@ namespace crecmap{
       C[core_region_id].x = M[core_region_id].x;
       C[core_region_id].y = M[core_region_id].y;
       C[core_region_id].placed++;
+      C[core_region_id].topology_error = 0;
         
+      mbb_node mn;
+      mn.key = C[core_region_id].x; mn.id = C[core_region_id].id;
+      MBB.x.insert(mn);
+      
+      mn.key = C[core_region_id].y; mn.id = C[core_region_id].id;
+      MBB.y.insert(mn);
+      
+      MBB.max_dx = C[core_region_id].dx;
+      MBB.max_dy = C[core_region_id].dy;
+      
       return core_region_id;
     }
     
+    // obsolet version of the linear intersection test; keep it for testing
     bool map_region_intersect(const recmapvector &C, const map_region &a){
-      // TODO(cp): use std::lower_bound(...); 
-      // but howto we get a sorted array suing STL? 
       for (map_region b : C){
         if (a.id != b.id && b.placed > 0){
         if(mbb_check(a, b)){
-          
           return true;
         }}
       }
-     
     return false;
     }
     
+    // MBB intersection test; doing binary search 
+    bool map_region_intersect_set(recmapvector &C, const mbb_set &S, const map_region &a){
+      double eps = 0.0;
+      
+      // range query on the x-axis
+      auto lower_x = std::lower_bound(S.x.begin(), S.x.end(), 
+                                      a.x - a.dx - S.max_dx - eps, 
+                                      [](const mbb_node& f1, const mbb_node& f2) { return f1.key < f2.key; });
+      
+      auto upper_x = std::upper_bound(S.x.begin(), S.x.end(), 
+                                      a.x + a.dx + S.max_dx + eps, 
+                                      [](const mbb_node& f1, const mbb_node& f2) { return f1.key < f2.key; });
+      
+      
+      for(auto it_x = lower_x; it_x != upper_x; ++it_x){
+        
+        if ((*it_x).id != a.id &&  mbb_check(a, C[(*it_x).id])){
+          return true;
+        }
+      }
+ 
+      // not intersetions until now; 
+      // now check the y-axis
+      auto lower_y = std::lower_bound(S.y.begin(), S.y.end(), 
+                                 a.y - a.dy - S.max_dy - eps, 
+                                 [](const mbb_node& f1, const mbb_node& f2) { return f1.key < f2.key; });
+      
+      auto upper_y = std::upper_bound(S.y.begin(), S.y.end(), 
+                                      a.y + a.dy + S.max_dy + eps, 
+                                      [](const mbb_node& f1, const mbb_node& f2) { return f1.key < f2.key; });
+      
+      for(auto it_y = lower_y; it_y != upper_y; ++it_y){
+        
+        if ((*it_y).id != a.id && mbb_check(a, C[(*it_y).id])){
+          return true;
+        }
+      }
+      
+      return false;
+    }
     
-    // place rectangle around predecessor_region_id if this violates the 
-    // constrain do a bfs until the box can be placed. 
+    // place rectangle around predecessor_region_id 
     bool PlaceRectangle(recmapvector &M, recmapvector &C, int region_id){
 
       double alpha0, alpha;
-      
-      //map_region candidate;
+      mbb_node mn;
+  
       double beta_sign = 1.0;
       
-      // strategy one: try to place it in the neighborhood
+      // strategy one: try to place it in the neighborhood; 
+      // and only one => allow non feasible solution to be filtered out by the metaheuristic 
       for (double beta = 0.0; beta <=  PI && C[region_id].placed == 0; beta += PI/180){
+        
         // iterate over all already placed connected rectangles
-        for (int adj_region_id : M[region_id].connected){
-
+        for (const int &adj_region_id : M[region_id].connected){
           if (C[adj_region_id].placed > 0 ){
-            
             alpha0 = get_angle(M[adj_region_id], M[region_id]);
-            
             alpha = alpha0 + (beta_sign * beta);
             beta_sign *= -1;
 
             place_rectanle(C[adj_region_id], alpha, C[region_id]);
+            
+            // for linear MBB check use
+            //if (!map_region_intersect(C, C[region_id])) {
+            if (!map_region_intersect_set(C, MBB, C[region_id])){
               
-            if (!map_region_intersect(C, C[region_id])) {
               C[region_id].placed++;
-              C[region_id].topology_error = 0;
+              C[region_id].topology_error = 0; // for the moment
+              
+              mn.key = C[region_id].x; mn.id = C[region_id].id;
+              MBB.x.insert(mn);
+              
+              mn.key = C[region_id].y; mn.id = C[region_id].id;
+              MBB.y.insert(mn);
+              
+              if (C[region_id].dx > MBB.max_dx) {MBB.max_dx = C[region_id].dx;}
+              if (C[region_id].dy > MBB.max_dy) {MBB.max_dy = C[region_id].dy;}
+              
+              // update dual graph
               C[adj_region_id].connected.push_back(region_id);
               C[region_id].connected.push_back(adj_region_id);
               return true;
@@ -300,83 +385,17 @@ namespace crecmap{
         } // END for (int adj_region_id : M[region_id].connected)
       }    
       
-      // make it as not placed
-      C[region_id].x = -1;
-      C[region_id].y = -1;
-      warnings.push_back(M[region_id].name + " could not be placed on the first attempt;");
-      return false;
-    }
-    
-    
-    bool PlaceRectangle_bfs(recmapvector &M, recmapvector &C, int region_id){
-        std::list<int> bfs_list;
-        std::vector<int> visited(M.size(), 0);
-        std::vector<int> bfs_num(M.size(), 0);
-        
-        double alpha0, alpha;
-        double beta_sign = 1.0;
-        
-    
-
-        visited[region_id]++;
-        
-        
-        for (int adj_region_id : M[region_id].connected){
-          
-          if (C[adj_region_id].placed > 0 && visited[adj_region_id] == 0){
-            warnings.push_back( M[region_id].name + "\t--\t" + M[adj_region_id].name );
-            bfs_list.push_back(adj_region_id);
-            
-            }
-        }
-
-        int w;
-      while(!bfs_list.empty()){
-        
-        w = bfs_list.front(); bfs_list.pop_front();
-        visited[w]++;
-        
-        for (int adj_region_id : M[w].connected){
-          if (C[adj_region_id].placed > 0){
-            bfs_list.push_back(adj_region_id);
-          }
-        }
-        
-        alpha0 = get_angle(M[w], M[region_id]);
-        
-        for (double beta = 0.0; beta <=  PI; beta += PI/180){
-          alpha = alpha0 + (beta_sign * beta);
-          beta_sign *= -1;
-        
-        
-          place_rectanle(C[w], alpha, C[region_id]);
-          
-          if (!map_region_intersect(C, C[region_id])) {
-            C[region_id].placed++;
-            C[region_id].topology_error = 0;
-            C[w].connected.push_back(region_id);
-            C[region_id].connected.push_back(w);
-            
-            warnings.push_back(C[region_id].name + " is now a neighbour of");
-            for(int j : C[region_id].connected){
-              warnings.push_back("\t" + C[j].name);
-            }
-            return true;
-          }
-          
-
-      }
-      }
-      warnings.push_back(M[region_id].name + " could not be placed. RecMap MP2 failed! please report.");
-      
+      // placement failed => make map region as not placed
       C[region_id].x = -1;
       C[region_id].y = -1;
       
+      // communicate this to the user later
+      warnings.push_back(M[region_id].name 
+                           + " could not be placed on the first attempt;");
       return false;
     }
     
-    
-    // dfs exporer of existing map M / placement of rectangles in cartogram C
+    // dfs explore of existing map M / placement of rectangles in cartogram C
     void DrawCartogram(recmapvector &M, recmapvector &C, int core_region_id){
       std::list<int> stack;
       std::vector<int> visited(num_regions, 0);
@@ -386,61 +405,77 @@ namespace crecmap{
       int current_region_id = core_region_id;
       stack.push_back(current_region_id);
       visited[current_region_id]++;
-      //
-      //int predecessor_region_id;
         
       while (stack.size()  > 0){
-        //predecessor_region_id = current_region_id;
         current_region_id = stack.back() ; stack.pop_back();
         dfs_num[current_region_id] = dfs_num_counter++;
         C[current_region_id].dfs_num = dfs_num[current_region_id];
-
-        //if (predecessor_region_id != current_region_id)
         
         if (current_region_id != core_region_id){
-        if (!PlaceRectangle(M, C, current_region_id)){
-          // stack.push_front(current_region_id);
-          //PlaceRectangle_bfs(M, C, current_region_id);
-        }}
-
-        for(int adj_region_id: M[current_region_id].connected){
+          if (!PlaceRectangle(M, C, current_region_id)){
+            // bad luck - let place first the other map regions
+          }
+        }
+        
+        for(const int & adj_region_id : M[current_region_id].connected){
           if (visited[adj_region_id] == 0) {
             visited[adj_region_id]++;
             stack.push_back(adj_region_id);
-            //dfs_num[adj_region_id] = dfs_num_counter++;
-            // C[adj_region_id].dfs_num = dfs_num[adj_region_id];
           }
         }
       } // while
-      
       
       std::for_each(C.begin(), C.end(), [&] (map_region &r) {
         if (r.placed == 0){
           PlaceRectangle(M, C, r.id);
           if (r.placed == 0){
+            // yes - 
+            // accept a non feasible solution to save computational resources 
+            // the metaheuristic has to fix that with the fitness function
             warnings.push_back(r.name + " was not placed!!");
           }
           //
         }});
     }
-  
     
-    bool CheckConnectedComponents(const recmapvector &M){
-      // t.b.implemented
-      return true;
-    }
-    
-    
-    
-    void ComputeError(const recmapvector &M, recmapvector &C){
-      for (map_region a : M){
-        for (map_region b : M){
-          double gammaM = get_angle(M[a.id], M[b.id]);
-          double gammaC = get_angle(C[a.id], C[b.id]);
-          double delta = fabs (gammaC - gammaM) / C.size();
+
+    void ComputeError(recmapvector &M, recmapvector &C){
+      double gammaM, gammaC, delta;
+
+      // relative position error
+      // TODO(cp): make the  each_unique_pair construct working to save 50% of the hand shakes
+      for (const auto & a : M){
+        for (const auto & b : M){
+          gammaM = get_angle(M[a.id], M[b.id]);
+          gammaC = get_angle(C[a.id], C[b.id]);
+          delta = fabs (gammaC - gammaM) / C.size();
           C[a.id].relative_position_error += delta;
-          
         }
+        
+        // alternative to the relative position error; play with it
+        for (const auto & idx : a.connected){
+          gammaM = get_angle(M[a.id], M[idx]);
+          gammaC = get_angle(C[a.id], C[idx]);
+          delta = fabs (gammaC - gammaM) / a.connected.size();
+          C[a.id].relative_position_neighborhood_error += delta;
+        }
+        
+        // topology error
+        // http://www.cplusplus.com/reference/algorithm/set_symmetric_difference/
+        std::vector<int> v(M[a.id].connected.size() + C[a.id].connected.size());
+        std::vector<int>::iterator it;
+        std::sort (M[a.id].connected.begin(), M[a.id].connected.end());
+        std::sort (C[a.id].connected.begin(), C[a.id].connected.end()); 
+        
+        
+        it = std::set_symmetric_difference (M[a.id].connected.begin(), 
+                                            M[a.id].connected.end(), 
+                                            C[a.id].connected.begin(), 
+                                            C[a.id].connected.end(), 
+                                            v.begin());
+        v.resize(it-v.begin());
+        C[a.id].topology_error = (v.size());
+        // for debug print all three vectors once
       }
     }
     
@@ -448,22 +483,15 @@ namespace crecmap{
       
       ComputePseudoDual(Map);
       
-      // CheckConnectedComponents(Map))
-      
       ComputeDesiredArea(Map, Cartogram);
       
       int core_region_id = ComputeCoreRegion(Map, Cartogram);
       msg.push_back("CORE REGION: " + Map[core_region_id].name);
-     
       DrawCartogram(Map, Cartogram, core_region_id);
       
       ComputeError(Map, Cartogram);
-  
-      // determine core region to start
-      // dfs 
       
     }//run  
   };
 }// namespace
-  
 #endif  
