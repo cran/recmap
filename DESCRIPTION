@@ -1,7 +1,7 @@
 Package: recmap
 Type: Package
 Title: Compute the Rectangular Statistical Cartogram
-Version: 0.3.0
+Version: 0.4.0
 Author: Christian Panse
 Maintainer: Christian Panse <Christian.Panse@gmail.com>
 Description: Provides an interface and a C++ implementation 
@@ -24,6 +24,6 @@ LinkingTo: Rcpp (>= 0.12.4)
 VignetteBuilder: knitr
 NeedsCompilation: yes
 URL: http://cartodraw.science/recmap/
-Packaged: 2016-05-30 20:25:04 UTC; cp
+Packaged: 2016-06-12 13:36:05 UTC; cp
 Repository: CRAN
-Date/Publication: 2016-05-31 00:30:39
+Date/Publication: 2016-06-12 17:22:56

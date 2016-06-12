@@ -4,18 +4,24 @@
 \alias{cartogram}
 
 \title{
+
 Compute a Rectangular Statistical Cartogram
+
 }
 
 \description{
+
 The input consist of a map represented by overlapping rectangles. 
 Concretely, the algorithm requires as input for each map region:
 
-- a tuple of (x, y) values corresponding to the (longitude, latitude) position
+\itemize{
+  \item{a tuple of (x, y) values corresponding to the 
+  (longitude, latitude) position,}
 
-- a tuple of (dx, dy) of expansion along (longitude, latitude)
+  \item{a tuple of (dx, dy) of expansion along (longitude, latitude),}
 
-- and a statistical value z.
+  \item{and a statistical value z.}
+}
 
 The (x, y) coordinates represent the center of the minimal bounding boxes 
 (MBB), The coordinates of the MBB are derived by adding or subtracting the 
@@ -23,22 +29,23 @@ The (x, y) coordinates represent the center of the minimal bounding boxes
 map region. The statistical values define the desired area of each map region.
 
 The output is a rectangular cartogram where the map regions are:
+\itemize{
+  \item{non overlapping,}
 
-- non overlapping,
+  \item{connected,}
 
-- connected,
+  \item{ratio and area of each rectangle corresponds to the desired areas,}
 
-- ratio and area of each rectangle corresponds to the desired areas.
-
-- rectangles are placed parallel to the axes
-
+  \item{rectangles are placed parallel to the axes.}
+}
 The construction heuristic places the rectangles in a way that important spatial 
 constraints, in particular
 
-- the topology of the pseudo dual graph,
+\itemize{
+  \item{the topology of the pseudo dual graph,}
 
-- the relative position of MBB centers.
-
+  \item{the relative position of MBB centers.}
+}
 are tried to be preserved.
 
 The ratios are preserved and the area of each region corresponds to the as 
@@ -48,7 +55,7 @@ input given statistical value z.
 \usage{
 recmap(df)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{df}{is the input formated as \code{data.frame} having the 
   columns (x, y, dx, dy, z, name) as described above.}
@@ -58,18 +65,19 @@ recmap(df)
 
 Basic idea of the current recmap \emph{implementation}:
 
-0. Compute the pseudo dual out of the overlapping map regions
+\enumerate{
+  \item{Compute the pseudo dual out of the overlapping map regions.}
 
-1. Determine the core region int(n/2) of index
+  \item{Determine the \emph{core region} by \code{index <- int(n / 2)}.}
 
-2. Place region by region along DFS skeleton of pseudo dual starting with the 
-core region
+  \item{Place region by region along DFS skeleton of 
+pseudo dual starting with the \emph{core region}.}
+}
 
 Note: if a rectangle can not be placed - accept a non \emph{feasible solution} 
 (avoid solutions having a topology error higher than 100)
 Solving this is compute expensive and due do the likely bad fitness value it 
 will be anyway rejected by the metaheuristic.
-
 
 \emph{Time Complexity:}
 The time complexity is O(n^2), where n is the number of regions.
@@ -84,12 +92,12 @@ Q.E.D.
 
 
 \emph{Perfomance:}
-In praxis on a 2.4 GHz Intel Core i7 (using only one core) computing using the 
-50 state U.S. map example, recmap can compute ~100 cartograms in one second.
+
+In praxis, computing on a 2.4 GHz Intel Core i7 machine (using only one core), using the 
+50 state U.S. map example, recmap can compute approximately 100 cartograms in one second.
 The number of MBB calls were
 (Min., Median, Mean, Max)  = (1448, 2534, 3174, 17740), using in each run
-a different order (\code{sample}) of the index.
-
+a different index order using the (\code{\link{sample}}) method.
 
 \emph{Geodetic datum:} the \code{recmap} algorithm is not transforming the 
 geodetic datum, e.g., WGS84 or Swissgrid.
@@ -110,11 +118,14 @@ metaheuristic.
 Roland Heilmann, Daniel Keim, Christian Panse, and Mike Sips (2004). RecMap: 
 Rectangular Map Approximations. InfoVis 2004, IEEE Symposium on Information 
 Visualization, Austin, Texas, 33-40.
-\url{http://dx.doi.org/10.1109/INFVIS.2004.57}
+\url{http://dx.doi.org/10.1109/INFVIS.2004.57}.
 
 Luca Scrucca (2013). GA: A Package for Genetic Algorithms in R. Journal of 
 Statistical Software, 53(4), 1-37. 
 \url{http://dx.doi.org/10.18637/jss.v053.i04}. 
+
+Christian Panse (2016). Rectangular Statistical Cartograms in R: The recmap 
+Package. \url{https://arxiv.org/abs/1606.00464}.
 
 }
 
@@ -167,16 +178,6 @@ plot_recmap(recmap(US.Map))
 par(op)
 
 
-\dontrun{
-# install.packages('rbenchmark')
-
-library(rbenchmark)
-benchmark(recmap(US.Map[sample(50,50),]), replications=100)
-##                              test replications elapsed relative user.self
-##1 recmap(US.Map[sample(50, 50), ])          100   1.255        1     1.124
-##  sys.self user.child sys.child
-##1    0.038          0         0
-}
 
 
 
@@ -193,7 +194,7 @@ recmap.fitness <- function(idxOrder, Map, ...){
 
 \dontrun{
 
-## use Genetic Algorithms (GA) as metaheuristic
+## use Genetic Algorithms (GA >=3.0.0) as metaheuristic
 
 # install.packages(c('doParallel', 'GA'))
 
@@ -204,7 +205,9 @@ library(doParallel)
 M <- US.Map
 
 recmapGA <- ga(type = "permutation", 
-  fitness = recmap.fitness, Map = M,
+  fitness = recmap.fitness, 
+  Map = M,
+  monitor = gaMonitor,
   min = 1, max = nrow(M) , 
   popSize = 4 * nrow(M), 
   maxiter = 10,
@@ -218,6 +221,17 @@ plot(recmapGA)
 
 }
 
+
+\dontrun{
+# install.packages('rbenchmark')
+
+library(rbenchmark)
+benchmark(recmap(US.Map[sample(50,50),]), replications=100)
+##                              test replications elapsed relative user.self
+##1 recmap(US.Map[sample(50, 50), ])          100   1.255        1     1.124
+##  sys.self user.child sys.child
+##1    0.038          0         0
+}
 
 ## Have Fun!
 }

@@ -20,9 +20,10 @@ library(recmap)
 plot_recmap(M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ],  
             col.text = 'black', lwd=2)
 
-## ----echo=FALSE, fig.width=2, fig.height=2, fig.align='center'-----------
+## ----echo=FALSE, fig.width=4, fig.height=3, fig.align='center', fig.retina=3, fig.cap="`a.x = 2, a.y = -5, a.dx = 20, a.dy = 5, b.dx = 1.5, b.dy = 5`"----
 
-draw_and_place_rectangle <- function(alpha=0.0, a.x=2, a.y=-5, a.dx = 20, a.dy = 5, b.dx=1.5, b.dy=5, ...){
+draw_and_place_rectangle <- function(alpha=0.0, a.x=2, a.y=-5, a.dx = 20, 
+                                     a.dy = 5, b.dx=1.5, b.dy=5, ...){
    
    rect(a.x - a.dx - b.dx, a.y - a.dy - b.dy, 
         a.x + a.dx + b.dx, a.y + a.dy + b.dy, 
@@ -37,16 +38,32 @@ draw_and_place_rectangle <- function(alpha=0.0, a.x=2, a.y=-5, a.dx = 20, a.dy =
    rect(c$x - c$dx, c$y - c$dy, c$x + c$dx, c$y + c$dy, ...)
 }
 
-op <- par(mar=c(0,0,0,0))
-plot(0,0 , xlim=c(-25,25), ylim=c(-25,25), asp=1, xlab='', ylab='', axes=FALSE); abline(v=0,h=0)
-r<-lapply(seq(0, pi/2, length=90), function(alpha){
-  draw_and_place_rectangle(alpha, col='#DD001199', border='#88888877')})
-r<-lapply(seq(pi/2, pi, length=90), function(alpha){
-  draw_and_place_rectangle(alpha, col='#00DD1199', border='#88888877')})
-r<-lapply(seq(-pi, -pi/2, length=90), function(alpha){
-  draw_and_place_rectangle(alpha, col='#11DDDD99', border='#88888877')})
-r<-lapply(seq(-pi/2, 0, length=90), function(alpha){
-  draw_and_place_rectangle(alpha, col='#0011DD99', border='#88888877')})
+op <- par(mar=c(4, 4, 0.5, 0.5))
+plot(0,0 , 
+     xlim=c(-35,25), ylim=c(-35,25), 
+     asp=1, xlab='x return value', ylab='y return value', axes=FALSE); abline(v=0,h=0)
+
+n <- 90
+
+cm <- rainbow(n, alpha = 0.5)
+alpha <- seq(-pi, pi, length = n)
+r <- lapply(1:n,
+            function(idx){
+    draw_and_place_rectangle(alpha[idx], 
+                             col=cm[idx], 
+                             border='#88888877')
+              })
+  
+legend("bottomleft", 
+       as.character(round(seq(-pi,pi, length=9),2)), 
+       pch=22, 
+       bty='n',
+       fill=rainbow(9, alpha=0.5),
+       border=rainbow(9, alpha=0.5),
+       col=rainbow(9, alpha=0.5),
+       title=expression(paste(alpha, " argument", sep=" ")),
+       cex=0.5,horiz = FALSE)
+
 
 par(op)
 
@@ -55,7 +72,9 @@ head(Cartogram <- recmap(Map <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]))
 
 ## ----fig.width=8,  fig.height=4.5, fig.align='left', fig.cap="Rectangular Map Approximation."----
 
-smp<- c(29,22,30,3,17,8,9,41,18,15,38,35,21,23,19,6,31,32,20,28,48,4,13,14,42,37,5,16,36,43,25,33,12,7,39,44,2,47,45,46,24,10,1,11,40,26,27,34)
+smp<- c(29, 22, 30, 3, 17, 8, 9, 41, 18, 15, 38, 35, 21, 23, 19, 6, 31, 32, 20, 
+        28, 48, 4, 13, 14, 42, 37, 5, 16, 36 , 43, 25, 33, 12, 7, 39, 44, 2, 47,
+        45, 46, 24, 10, 1,11 ,40 ,26 ,27 ,34)
 plot_recmap(Cartogram.Population <- recmap(M[smp, ]), 
             col.text = 'black', lwd=2)
 
@@ -90,19 +109,31 @@ M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
 plot_recmap(Cartogram.Income <- recmap(M[order(M$x),]), 
             col.text = 'black', lwd=2)
 
-## ----fig.width=7, fig.height=3.5, fig.align='center', fig.retina=2, fig.cap="checkerboard fun (left input; right output of `recmap`) - the area of a black box needs to be four times as large as the area of a white box."----
-op<-par(mar=c(0,0,0,0), mfrow=c(1, 2), bg='white')
+## ----fig.width=7, fig.height=2.5, fig.align='center', fig.retina=2, fig.cap="checkerboard fun - input, area of black regions have to be four times as big as white regions (left); solution found by a greedy random algorithm (middle); solution found by genetic algorithm (right)", fig.align='left'----
+op<-par(mar=c(0,0,0,0), mfrow=c(1, 3), bg='white')
 
-plot_recmap(checkerboard <- recmap:::.checkerboard(8),
-            col=c('white','white','white','black')[checkerboard$z])
+plot_recmap(checkerboard8x8 <- recmap:::.checkerboard(8),
+            col=c('white','white','white','black')[checkerboard8x8$z])
 
-# found by a Non-deterministic Turing machine (NTM)
-smp <- c(8,56,18,5,13,57,3,37,62,58,7,16,40,59,17,34,29,41,46,27,54,43,2,21,
-         38,52,31,20,28,48,1,22,55,11,25,19,50,10,24,53,47,30,45,44,32,35,51,
-         15,64,12,14,39,26,6,42,33,4,36,63,49,60,61,9,23)
+# found by a greedy randomized search
+index.greedy <- c(8, 56, 18, 5, 13, 57, 3, 37, 62, 58, 7, 16, 40, 59, 17, 34,
+                  29, 41, 46, 27, 54, 43, 2, 21, 38, 52, 31, 20, 28, 48, 1, 22,
+                  55, 11, 25, 19, 50, 10, 24, 53, 47, 30, 45, 44, 32, 35, 51,
+                  15, 64, 12, 14, 39, 26, 6, 42, 33, 4, 36, 63, 49, 60, 61, 9,
+                  23)
 
-plot_recmap(Cartogram.checkerboard <- recmap(checkerboard[smp,]), 
-            col=c('white','white','white','black')[Cartogram.checkerboard$z])
+plot_recmap(Cartogram.checkerboard8x8.greedy <- recmap(checkerboard8x8[index.greedy,]),
+            col=c('white','white','white','black')[Cartogram.checkerboard8x8.greedy$z])
+
+# found by a genetic algorithm
+index.ga <- c(52, 10, 27, 63, 7, 20, 32, 18, 47, 28, 6, 55, 11, 61, 38, 50, 5,
+              21, 36, 34, 2, 22, 3, 1, 29, 57, 43, 4, 51, 58, 31, 49, 44, 25,
+              59, 33, 17, 40, 8, 41, 26, 37, 19, 56, 45, 35, 62, 53, 24, 64,
+              30, 15, 39, 12, 60, 48, 16, 23, 46, 42, 13, 54, 14, 9)
+
+plot_recmap(Cartogram.checkerboard8x8.ga <- recmap(checkerboard8x8[index.ga,]),
+            col=c('white','white','white','black')[Cartogram.checkerboard8x8.ga$z])
+
 
 ## ------------------------------------------------------------------------
 sessionInfo()
