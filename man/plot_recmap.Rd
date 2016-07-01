@@ -5,8 +5,8 @@
 recmap Plot Function
 }
 \description{
-plots input and output of \code{\link{recmap}} function.
-The function reqiures column names (x, y, dx, dy).
+plots input and output of the \code{\link{recmap}} function.
+The function requires column names (x, y, dx, dy).
 }
 \usage{
 plot_recmap(S, col='#00000011', col.text = 'grey', ...)
@@ -49,5 +49,6 @@ plot_recmap(Cartogram)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{cartogram}% use one of  RShowDoc("KEYWORDS")
-\keyword{recmap}% __ONLY ONE__ keyword per line
+
+\keyword{cartogram}
+\keyword{recmap}

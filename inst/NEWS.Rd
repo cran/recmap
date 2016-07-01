@@ -1,6 +1,15 @@
 \name{NEWS}
 \title{News for Package 'recmap'}
 
+\section{Changes in recmap version 0.5.0 (2016-07-01)}{
+  \itemize{
+    \item add docker Public | Automated Build 
+    \url{https://hub.docker.com/r/cpanse/recmap/}
+    \item manual and vignette cosmetics
+    \item added \code{zzz.R}
+  }
+}
+
 \section{Changes in recmap version 0.4.0 (2016-06-12)}{
 
   \itemize{
@@ -19,7 +28,7 @@
     
     \code{if (sum(cartogram$topology.error == 100) > 0){return (0)}}
     
-    \item make \code{recmap.h} passing google/styleguides using
+    \item make \code{recmap.h} pass google/styleguides using
     \href{https://github.com/google/styleguide/tree/gh-pages/cpplint}{cpplint}
     
     \item manual and vignette cosmetics
