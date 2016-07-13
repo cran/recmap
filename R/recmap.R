@@ -1,5 +1,13 @@
+#R
 
+# this function reproduces the original election cartogram from 2004 using 
+# the cartogram output from the 2003 implementation.
 .draw_recmap_us_state_ev <- function(plot=TRUE){
+  
+  
+  # red-blue bi-poloar colormap 100; used in all CartoDraw / RecMap 
+  # publications since 2001 for visualizing cartographic error / scaling factor 
+  # and elelction data; exported from CartoView 
   
   cm <- c("#FF0000", "#FF0505", "#FF0A0A", "#FF1010", "#FF1515", "#FF1A1A", "#FF1F1F",
           "#FF2424", "#FF2A2A", "#FF2F2F", "#FF3434", "#FF3939", "#FF3E3E", "#FF4444",
@@ -17,6 +25,8 @@
           "#2A2AFF", "#2424FF", "#1F1FFF", "#1A1AFF", "#1515FF", "#1010FF", "#0A0AFF",
           "#0505FF", "#0000FF")
   
+  # does not look so impressive
+  # cm <- rev(diverge_hcl(100))
   recmap_us_state_ev.file <- system.file("extdata", 
                                          "recmap_us_state_ev.polygon", 
                                          package = "recmap")
@@ -47,7 +57,7 @@
 }
 
 
-.checkerboard <- function(n = 8, ratio = 4){
+checkerboard <- function(n = 8, ratio = 4){
   xy <- (t(combn(1:n, 2)))
   xy <- rbind(cbind(xy[,1], xy[,2]), cbind(xy[,2], xy[,1]), cbind(1:n, 1:n))
   
@@ -69,7 +79,7 @@
   
   res <- res[with(res, order(x, y)), ]
   row.names(res) <- 1:nrow(res); # paste(letters[1:n][xy[,1]], xy[,2], sep='')
-  class(res) = c('data.frame', 'recmapFrame')
+  class(res) = c('recmap', class(res))
   res
 }
 
@@ -106,10 +116,43 @@ recmap <- function(df) {
     stop('reqires at least two map regions.')
   
   
-  recmap_(df)
+  res <- recmap_(df)
+  
+  class(res) = c('recmap', class(res))
+  res
 }
 
-plot_recmap <- function(S, col='#00000011', col.text = 'grey', ...){
+# require(sp)
+recmap2sp <- function(rm, df=NULL){
+  
+  SpP <- SpatialPolygons(lapply(1:nrow(rm), function(i){
+    r <- rm[i, ]
+    Sr <- Polygon(cbind(c(r$x - r$dx, 
+                          r$x - r$dx, 
+                          r$x + r$dx, 
+                          r$x + r$dx), 
+                        c(r$y + r$dy, 
+                          r$y - r$dy, 
+                          r$y - r$dy, 
+                          r$y + r$dy)))
+    
+    Polygons(list(Sr), r$name)
+  }))
+  
+  if (is.null(df)){
+    return(SpatialPolygonsDataFrame(SpP, 
+                                    data.frame(z = rm$z, 
+                                               row.names = rm$name)))}
+  
+  SpatialPolygonsDataFrame(SpP, df)
+  
+}
+
+plot.recmap <- function(x, col='#00000011', col.text = 'grey', ...){
+#  col <- '#00000011'
+#  col.text <- 'grey'
+
+  S <- x
   try (if(sum(c("x", "y", "dx", "dy") %in% names(S)) != 4) 
     stop("column names 'x', 'y', 'dx', 'dy', and 'z' are reqired"))
   
@@ -120,7 +163,7 @@ plot_recmap <- function(S, col='#00000011', col.text = 'grey', ...){
        asp=1,
        xlab = '',
        ylab = '',
-       axes = FALSE)
+       axes = FALSE, ...)
   
   # col.idx <- (length(colormap) -1  ) * (S$z - min(S$z) / (max(S$z) - min(S$z))) + 1
   
@@ -129,7 +172,7 @@ plot_recmap <- function(S, col='#00000011', col.text = 'grey', ...){
        xright = S$x + S$dx, 
        ytop = S$y + S$dy, 
        col = col, 
-       border = 'darkgreen', ...)
+       border = 'darkgreen')
   
   if (sqrt(length(S$x)) < 10){
     text(S$x, S$y, 
@@ -147,8 +190,6 @@ plot_recmap <- function(S, col='#00000011', col.text = 'grey', ...){
 
 .plot_recmap_error <- function(S){
   
-
-
   plot(sort(S$relpos.error),
        main="relpos.error",
        ylab=expression(paste("normalized angle [in ", pi,"]")))
@@ -163,6 +204,45 @@ plot_recmap <- function(S, col='#00000011', col.text = 'grey', ...){
   axis(4, c(0.25,0.5,0.75)*pi, c(0.25,0.5,0.75))
   abline(h=c(0.25,0.5,0.75)*pi, col="#55555555")
   
+}
+
+
+# define a fitness function
+.recmap.fitness <- function(idxOrder, Map, ...){
+  Cartogram <- recmap(Map[idxOrder, ])
+  # a map region could not be placed; 
+  # accept only feasible solutions!
+  
+  if (sum(Cartogram$topology.error == 100) > 0){return (0)}
+  
+  1 / sum(Cartogram$relpos.error)
+}
+
+
+recmapGA <- function(Map, 
+                      fitness = .recmap.fitness,
+                      pmutation = 0.25, 
+                      popSize = 10 * nrow(Map), 
+                      maxiter = 10, 
+                      run = maxiter,
+                      monitor = if(interactive()) 
+                      { gaMonitor2 } 
+                     else FALSE,
+                      parallel = FALSE){
+  GA <- ga(type = "permutation", 
+           fitness = fitness, 
+           Map = Map,
+           monitor = monitor,
+           min = 1, max = nrow(Map) , 
+           popSize = popSize, 
+           maxiter = maxiter, 
+           run = run, 
+           parallel = parallel,
+           pmutation = pmutation)
+  
+  list(GA = GA, 
+       Map = Map[GA@solution[1, ], ], 
+       Cartogram = recmap(Map[GA@solution[1, ], ]))
 }
 
 

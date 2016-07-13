@@ -1,10 +1,21 @@
 useDynLib(recmap)
-import(Rcpp)
 
-export("recmap")
-export("plot_recmap")
+import(Rcpp)
 
 importFrom("utils", "packageVersion")
 importFrom("graphics", "plot", "polygon", "rect", "text")
 importFrom("utils", "combn", "read.table")
 importFrom("graphics", "abline", "axis")
+importFrom("sp", "Polygon", "Polygons", "SpatialPolygons", 
+           "SpatialPolygonsDataFrame", 
+           "spplot")
+
+importFrom("GA", "ga", "gaMonitor", "gaMonitor2", "plot")
+
+export("recmap")
+export("recmapGA")
+export("recmap2sp")
+export("checkerboard")
+
+export("plot.recmap")
+S3method(plot, recmap)

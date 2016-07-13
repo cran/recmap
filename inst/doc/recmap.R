@@ -17,7 +17,7 @@ usa <- data.frame(x=state.center$x,
 ## ----fig.width=7, fig.height=3-------------------------------------------
 op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
 library(recmap)
-plot_recmap(M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ],  
+plot.recmap(M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ],  
             col.text = 'black', lwd=2)
 
 ## ----echo=FALSE, fig.width=4, fig.height=3, fig.align='center', fig.retina=3, fig.cap="`a.x = 2, a.y = -5, a.dx = 20, a.dy = 5, b.dx = 1.5, b.dy = 5`"----
@@ -76,15 +76,15 @@ head(Cartogram <- recmap(Map <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]))
 smp<- c(29, 22, 30, 3, 17, 8, 9, 41, 18, 15, 38, 35, 21, 23, 19, 6, 31, 32, 20, 
         28, 48, 4, 13, 14, 42, 37, 5, 16, 36 , 43, 25, 33, 12, 7, 39, 44, 2, 47,
         45, 46, 24, 10, 1,11 ,40 ,26 ,27 ,34)
-plot_recmap(Cartogram.Population <- recmap(M[smp, ]), 
+plot(Cartogram.Population <- recmap(M[smp, ]), 
             col.text = 'black', lwd=2)
 
-## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ population estimate as of July 1, 1975;"----
+## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ population estimate as of July 1, 1975;", warning=FALSE----
 
 op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
 usa$z <- state.x77[, 'Population']
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
-plot_recmap(Cartogram.Population <- recmap(M[order(M$x),]), 
+plot(Cartogram.Population <- recmap(M[order(M$x),]), 
             col.text = 'black', lwd=2)
 
 
@@ -95,25 +95,25 @@ op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
 smp <- c(20,47,4,40,9,6,32,33,3,10,34,22,2,28,15,12,39,7,42,45,19,13,43,30,24,
          25,11,17,37,41,26,29,21,35,8,36,14,16,31,48,46,38,23,18,1,5,44,27)
 
-plot_recmap(Cartogram.Population <- recmap(M[smp,]), col.text = 'black', lwd=2)
+plot(Cartogram.Population <- recmap(M[smp,]), col.text = 'black', lwd=2)
 
 ## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ capita income (1974);"----
 op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
 usa$z <- state.x77[, 'Income']
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
-plot_recmap(Cartogram.Income <- recmap(M[order(M$x),]), col.text = 'black', lwd=2)
+plot(Cartogram.Income <- recmap(M[order(M$x),]), col.text = 'black', lwd=2)
 
 ## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ mean number of days with minimum temperature below freezing (1931–1960) in capital or large city;"----
 op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
 usa$z <- state.x77[, 'Frost'] 
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
-plot_recmap(Cartogram.Income <- recmap(M[order(M$x),]), 
+plot(Cartogram.Income <- recmap(M[order(M$x),]), 
             col.text = 'black', lwd=2)
 
 ## ----fig.width=7, fig.height=2.5, fig.align='center', fig.retina=2, fig.cap="checkerboard fun - input, area of black regions have to be four times as big as white regions (left); solution found by a greedy random algorithm (middle); solution found by genetic algorithm (right)", fig.align='left'----
 op<-par(mar=c(0,0,0,0), mfrow=c(1, 3), bg='white')
 
-plot_recmap(checkerboard8x8 <- recmap:::.checkerboard(8),
+plot(checkerboard8x8 <- checkerboard(8),
             col=c('white','white','white','black')[checkerboard8x8$z])
 
 # found by a greedy randomized search
@@ -123,7 +123,7 @@ index.greedy <- c(8, 56, 18, 5, 13, 57, 3, 37, 62, 58, 7, 16, 40, 59, 17, 34,
                   15, 64, 12, 14, 39, 26, 6, 42, 33, 4, 36, 63, 49, 60, 61, 9,
                   23)
 
-plot_recmap(Cartogram.checkerboard8x8.greedy <- recmap(checkerboard8x8[index.greedy,]),
+plot(Cartogram.checkerboard8x8.greedy <- recmap(checkerboard8x8[index.greedy,]),
             col=c('white','white','white','black')[Cartogram.checkerboard8x8.greedy$z])
 
 # found by a genetic algorithm
@@ -132,7 +132,7 @@ index.ga <- c(52, 10, 27, 63, 7, 20, 32, 18, 47, 28, 6, 55, 11, 61, 38, 50, 5,
               59, 33, 17, 40, 8, 41, 26, 37, 19, 56, 45, 35, 62, 53, 24, 64,
               30, 15, 39, 12, 60, 48, 16, 23, 46, 42, 13, 54, 14, 9)
 
-plot_recmap(Cartogram.checkerboard8x8.ga <- recmap(checkerboard8x8[index.ga,]),
+plot(Cartogram.checkerboard8x8.ga <- recmap(checkerboard8x8[index.ga,]),
             col=c('white','white','white','black')[Cartogram.checkerboard8x8.ga$z])
 
 

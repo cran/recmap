@@ -112,6 +112,7 @@ a different index order using the (\code{\link{sample}}) method.
 
 \emph{Geodetic datum:} the \code{recmap} algorithm is not transforming the 
 geodetic datum, e.g., WGS84 or Swissgrid.
+
 }
 
 \value{
@@ -125,19 +126,16 @@ metaheuristic.
 }
 
 \references{
-
-Roland Heilmann, Daniel Keim, Christian Panse, and Mike Sips (2004). RecMap: 
-Rectangular Map Approximations. InfoVis 2004, IEEE Symposium on Information 
-Visualization, Austin, Texas, 33-40.
+\itemize{
+\item Roland Heilmann, Daniel Keim, Christian Panse, and Mike Sips (2004). 
+RecMap: Rectangular Map Approximations. 
+InfoVis 2004, IEEE Symposium on Information Visualization, Austin, Texas, 33-40.
 \url{http://dx.doi.org/10.1109/INFVIS.2004.57}.
 
-Luca Scrucca (2013). GA: A Package for Genetic Algorithms in R. Journal of 
-Statistical Software, 53(4), 1-37. 
-\url{http://dx.doi.org/10.18637/jss.v053.i04}. 
-
-Christian Panse (2016). Rectangular Statistical Cartograms in R: The recmap 
-Package. \url{https://arxiv.org/abs/1606.00464}.
-
+\item Christian Panse (2016). 
+Rectangular Statistical Cartograms in R: The recmap Package. 
+\url{https://arxiv.org/abs/1606.00464}.
+}
 }
 
 \author{
@@ -148,26 +146,29 @@ Package. \url{https://arxiv.org/abs/1606.00464}.
 
 \seealso{
 
-  \code{\link{plot_recmap}}
+\itemize{
+  \item \code{\link{plot.recmap}}
 
-  The package vignette 
+  \item \code{\link{recmapGA}}
+
+  \item The package vignette 
   \url{https://cran.r-project.org/web/packages/recmap/vignettes/recmap.html} 
   or by calling \code{vignette("recmap")} on the R command prompt.
   
-  A shiny web application \url{https://recmap.shinyapps.io/state_x77/}.
-  
+  \item A shiny web application \url{https://recmap.shinyapps.io/state_x77/}.
+  }
 }
 
 \examples{
-map <- recmap:::.checkerboard(2)
+map <- checkerboard(2)
 cartogram <- recmap(map)
 
 map
 cartogram
 
-op <- par(mfrow=c(1,2))
-plot_recmap(map)
-plot_recmap(cartogram)
+op <- par(mfrow = c(1, 2))
+plot(map)
+plot(cartogram)
 
 ## US example
 usa <- data.frame(x = state.center$x, 
@@ -184,8 +185,8 @@ usa$z <- state.x77[, 'Population']
 US.Map <- usa[match(usa$name, 
   c('Hawaii', 'Alaska'), nomatch = 0)  == 0, ]
 
-plot_recmap(US.Map)
-plot_recmap(recmap(US.Map))
+plot.recmap(US.Map)
+plot(recmap(US.Map))
 par(op)
 
 # define a fitness function
@@ -222,7 +223,7 @@ recmapGA <- ga(type = "permutation",
   parallel=TRUE,
   pmutation = 0.25)
 
-plot_recmap(recmap(M[recmapGA@solution[1,],]))
+plot(recmap(M[recmapGA@solution[1,],]))
 
 plot(recmapGA)
 
