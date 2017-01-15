@@ -3,7 +3,7 @@
 \title{Summary for recmap}
 \alias{summary}
 \alias{summary.recmap}
-
+\alias{summary.recmapGA}
 
 
 \description{
@@ -30,7 +30,7 @@ objective functions or number of map regions.
 }
 
 \author{
-Christian Panse
+Christian Panse 2016
 }
 
 \references{

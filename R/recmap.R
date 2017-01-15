@@ -1,7 +1,12 @@
 #R
 
-# this function reproduces the original election cartogram from 2004 using 
-# the cartogram output from the 2003 implementation.
+
+#' this function reproduces the original election cartogram from 2004 using 
+#' the cartogram output from the 2003 implementation.
+#'
+#' @param plot default is TRUE
+#'
+#' @return the plot
 .draw_recmap_us_state_ev <- function(plot=TRUE){
   
   
@@ -41,19 +46,98 @@
   us_state_election_2004 <- read.table(us_state_election_2004.file, 
                                        sep = ',')
   if(plot){
-    plot(recmap_us_state_ev$x, recmap_us_state_ev$y, type='n', asp = 1, xlab='', ylab='', axes=FALSE)
+
+    idx <- seq(1, nrow(recmap_us_state_ev), by=5)
     
-    polygon(recmap_us_state_ev$x, recmap_us_state_ev$y,
-            col=cm[round(length(cm)*(us_state_election_2004$V8/(us_state_election_2004$V8 + us_state_election_2004$V9)))+1])
+    x.max <- apply(cbind(recmap_us_state_ev$x[idx], 
+                         recmap_us_state_ev$x[idx+1], 
+                         recmap_us_state_ev$x[idx+2],
+                         recmap_us_state_ev$x[idx+3]), 1, max)
+    x.min <- apply(cbind(recmap_us_state_ev$x[idx], 
+                         recmap_us_state_ev$x[idx+1], 
+                         recmap_us_state_ev$x[idx+2], 
+                         recmap_us_state_ev$x[idx+3]), 1, min)
     
-    text(us_state_election_2004$V1,us_state_election_2004$V2,
-         as.character(us_state_election_2004$V3),cex=round(us_state_election_2004$V5*20)/100,
-         lwd=2.5,
-         #pos=3,
-         col="black");
+    y.max <- apply(cbind(recmap_us_state_ev$y[idx], 
+                         recmap_us_state_ev$y[idx+1], 
+                         recmap_us_state_ev$y[idx+2], 
+                         recmap_us_state_ev$y[idx+3]), 1, max) 
+    
+    y.min <- apply(cbind(recmap_us_state_ev$y[idx],
+                         recmap_us_state_ev$y[idx+1],
+                         recmap_us_state_ev$y[idx+2],
+                         recmap_us_state_ev$y[idx+3]), 1, min)
+    
+    
+    dx <- 0.5 * (x.max - x.min)
+    dy <- 0.5 * (y.max - y.min)
+    
+    
+    M <- data.frame(x=x.min + dx, 
+                    y=y.min + dy, 
+                    dx=dx, dy=dy, 
+                    z=(us_state_election_2004$V8/(us_state_election_2004$V8 + us_state_election_2004$V9)),
+                    name=gsub(' ', '\n', as.character(us_state_election_2004$V3)))
+
+    tcol <- rep('black', nrow(us_state_election_2004))
+    tcol[8] <- 'white'
+    
+    plot.recmap(M,
+                col.text = tcol,
+                border=NULL,
+                col=cm[round(length(cm) * (us_state_election_2004$V8/(us_state_election_2004$V8 + us_state_election_2004$V9)))+1])
+  }else{
+    M
   }
+}
+
+
+#' construct polygon mesh displayed in Figure 4a in 
+#' \url{https://doi.org/10.1109/TVCG.2004.1260761}
+#'
+#' @param A defines the area of a region in the center
+#'
+#' @return a \link{SpatialPolygons} object 
+#' @export
+#'
+#' @examples
+.get_7triangles <- function(A=1){
+  t<-list()
   
-  # res <- data.frame()
+  tan30 <- tan(30 / 180 * pi)
+  tan60 <- tan(60 / 180 * pi)
+  sin30 <- sin(30 / 180 * pi)
+  sin60 <- sin(60 / 180 * pi)
+  cos30 <- cos(30 / 180 * pi)
+  
+  l <- sqrt(2 * A / sin60) 
+  
+  t[[1]] <-  Polygons(list(Polygon(cbind(c( 0.0, l, l/2), c( 0.0, 0.0, h <- tan60 * l / 2)))), 1)
+  
+  
+  b <- h - (tan30 * l / 2)
+  c <- -tan30 * A
+  
+  h2 <- - b /2 + sqrt((b/2)^2 -c) 
+  
+  y <- h + h2 
+  
+  x <- y / tan30
+  
+  h3 <- (y / sin30) - h  
+  h4 <- sqrt((x - cos30 * h)^2 + (y - sin30 * h)^2)
+  stopifnot (abs(h3 - h4) < 0.01)
+  
+  t[[2]] <- Polygons(list(Polygon(cbind(c( l/2, x, l/2 - (x-l/2)), c(h, y, y)))), 2)
+  t[[3]] <- Polygons(list(Polygon(cbind(c(l/2, l, x), c(-h3,0,y)))), 3)
+  t[[4]] <- Polygons(list(Polygon(cbind(c(l/2,  l/2 - (x-l/2), 0), c(-h3, y, 0)))), 4)
+  t[[5]] <- Polygons(list(Polygon(cbind(c(0, l/2 - (x-l/2), l/2), c(0, y, h)))), 5)
+  t[[6]] <- Polygons(list(Polygon(cbind(c(l, x, l/2), c(0, y, h)))), 6)
+  t[[7]] <- Polygons(list(Polygon(cbind(c( 0.0, l, l/2), c(0, 0, -h3)))), 7)
+  
+  triangle.map <- SpatialPolygons(t)
+
+  triangle.map
 }
 
 
@@ -128,7 +212,7 @@ recmap <- function(df) {
   }
 }
 
-# require(sp)
+# requires https://CRAN.R-project.org/package=sp 
 recmap2sp <- function(rm, df=NULL){
   
   SpP <- SpatialPolygons(lapply(1:nrow(rm), function(i){
@@ -151,7 +235,41 @@ recmap2sp <- function(rm, df=NULL){
                                                row.names = rm$name)))}
   
   SpatialPolygonsDataFrame(SpP, df)
+}
+
+
+sp2recmap <- function(X){
   
+  if (class(X) == "SpatialPolygonsDataFrame"){
+    n <- length(X@polygons)
+    
+    df <- do.call('rbind', lapply(1:n, function(id){
+      
+      
+      do.call('rbind', lapply(X@polygons[id], function(p){
+        mbb <- bbox(p)
+        
+        x.min <- mbb['x','min']
+        x.max <- mbb['x','max']
+        y.min <- mbb['y','min']
+        y.max <- mbb['y','max']
+        
+        dx <- 0.5 * (x.max - x.min)
+        dy <- 0.5 * (y.max - y.min)
+        
+        data.frame(x=x.min + dx, y = y.min + dy, dx=dx, dy=dy, name=p@ID)
+      }))
+      
+    }))
+    
+   df <- cbind(df, X@data) 
+   class(df) <- c('recmap', class(df))
+  return(df)
+  }else{
+    message('requires a "SpatialPolygonsDataFrame" class as argument')
+    return (NULL)
+  }
+
 }
 
 .compute_area_error <- function(x){
@@ -187,7 +305,8 @@ summary.recmap <- function(object, ...) {
     errorArea <- round(.compute_area_error(x), 2)
     errorTopology <- NA
     errorRelPos <- NA
-    
+    spaceFilling <- 100 * sum(4 * x$dx * x$dy) / ((max(x$x + x$dx) - min(x$x - x$dx)) * (max(x$y + x$dy) - min(x$y - x$dy)))
+   
     if ("dfs.num" %in% names(x)){
       errorTopology <- .compute_topology_error(x)
       errorRelPos <-  round(.compute_relpos_error(x), 2)
@@ -199,24 +318,26 @@ summary.recmap <- function(object, ...) {
                       "area error", 
                       "topology error", 
                       "relative position error",
+		      "screen filling [in %]",
                       "xmin",
                       "xmax",
                       "ymin",
                       "ymax"), 
           values = c(nRegions, errorArea, errorTopology, errorRelPos,
-                     min(x$x),
-                     max(x$x),
-                     min(x$y),
-                     max(x$y)))
+	  	    spaceFilling,
+                     min(x$x - x$dx),
+                     max(x$x + x$dx),
+                     min(x$y - x$dy),
+                     max(x$y + x$dy)))
     
   }
   
 }
 
-plot.recmap <- function(x, col='#00000011', col.text = 'grey', ...){
+plot.recmap <- function(x, col='#00000011', col.text = 'grey', border = 'darkgreen', ...){
 #  col <- '#00000011'
 #  col.text <- 'grey'
-
+  label.text <- TRUE
   S <- x
   try (if(sum(c("x", "y", "dx", "dy") %in% names(S)) != 4) 
     stop("column names 'x', 'y', 'dx', 'dy', and 'z' are reqired"))
@@ -230,26 +351,18 @@ plot.recmap <- function(x, col='#00000011', col.text = 'grey', ...){
        ylab = '',
        axes = FALSE, ...)
   
-  # col.idx <- (length(colormap) -1  ) * (S$z - min(S$z) / (max(S$z) - min(S$z))) + 1
-  
   rect(xleft = S$x - S$dx, 
        ybottom = S$y - S$dy,  
        xright = S$x + S$dx, 
        ytop = S$y + S$dy, 
        col = col, 
-       border = 'darkgreen')
+       border = border)
   
-  if (sqrt(length(S$x)) < 10){
+  if (sqrt(length(S$x)) < 10 & label.text){
     text(S$x, S$y, 
          S$name,
-         cex=1.5/sqrt(sqrt(length(S$x))),
+	       cex = S$dx / strwidth(S$name),
          col = col.text)
-    
-    text(S$x, S$y, 
-         S$dfs_num,
-         col = col.text, 
-         pos=1, 
-         cex=1/sqrt(sqrt(length(S$x))))
   }
 }
 
@@ -321,10 +434,12 @@ recmapGRASP <-
                 iteration, "\n"))
     }
     
-    list(GRASP = solution.best, 
+    r <- list(GRASP = solution.best, 
          Map = Map, 
          Cartogram = recmap(Map[solution.best$solution, ])
          )
+    
+    class(r) <- c(class(r), 'recmapGRASP')
 }
 
 
@@ -337,7 +452,7 @@ recmapGA <- function(Map,
                       monitor = if(interactive()) 
                       { gaMonitor2 } 
                      else FALSE,
-                      parallel = FALSE){
+                      parallel = FALSE, ...){
   GA <- ga(type = "permutation", 
            fitness = fitness, 
            Map = Map,
@@ -347,11 +462,36 @@ recmapGA <- function(Map,
            maxiter = maxiter, 
            run = run, 
            parallel = parallel,
-           pmutation = pmutation)
+           pmutation = pmutation, ...)
   
-  list(GA = GA, 
+  res <- list(GA = GA, 
        Map = Map[GA@solution[1, ], ], 
        Cartogram = recmap(Map[GA@solution[1, ], ]))
+
+  class(res) = c('recmapGA', class(res))
+  res
 }
 
 
+plot.recmapGA <- function(x, ...){
+	plot(x$GA, main="GA")
+	plot.recmap(x$Map, main="input map", ...)
+	plot.recmap(x$Cartogram, main = "output cartogram", ...)
+}
+
+plot.recmapGRASP <- function(x, ...){
+  plot.recmap(x$Map, main="input map", ...)
+  plot.recmap(x$Cartogram, main = "output cartogram", ...)
+}
+
+summary.recmapGA <- function(object, ...){
+  cat("summary of class recmapGA:\n")
+	
+  cat("summary of the GA:\n")
+  print(summary.ga(object$GA))
+  
+  S <- summary.recmap(object$Map)
+	names(S) <- "Map"
+	S$Cartogram <- summary.recmap(object$Cartogram)$values
+	print(S)
+}

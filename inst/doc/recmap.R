@@ -20,64 +20,22 @@ library(recmap)
 plot.recmap(M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ],  
             col.text = 'black', lwd=2)
 
-## ----echo=FALSE, fig.width=4, fig.height=3, fig.align='center', fig.retina=3, fig.cap="`a.x = 2, a.y = -5, a.dx = 20, a.dy = 5, b.dx = 1.5, b.dy = 5`"----
-
-draw_and_place_rectangle <- function(alpha=0.0, a.x=2, a.y=-5, a.dx = 20, 
-                                     a.dy = 5, b.dx=1.5, b.dy=5, ...){
-   
-   rect(a.x - a.dx - b.dx, a.y - a.dy - b.dy, 
-        a.x + a.dx + b.dx, a.y + a.dy + b.dy, 
-        lwd=3, border='grey')
-  
-   rect(a.x - a.dx, a.y - a.dy, 
-        a.x + a.dx, a.y + a.dy)
-   
-  
-  c <- recmap:::place_rectanle(a.x, a.y, a.dx, a.dy, b.dx, b.dy, alpha)
-
-   rect(c$x - c$dx, c$y - c$dy, c$x + c$dx, c$y + c$dy, ...)
-}
-
-op <- par(mar=c(4, 4, 1.5, 0.25))
-plot(0,0 , 
-     xlim=c(-35,25), ylim=c(-35,25), 
-     main=expression(f: bold(R)^6 %*%  group("[",list(-pi, pi),"]") %->% bold(R)^2),
-     asp=1, xlab='x return value', ylab='y return value', axes=FALSE); abline(v=0,h=0)
-
-n <- 90
-
-cm <- rainbow(n, alpha = 0.5)
-alpha <- seq(-pi, pi, length = n)
-r <- lapply(1:n,
-            function(idx){
-    draw_and_place_rectangle(alpha[idx], 
-                             col=cm[idx], 
-                             border='#88888877')
-              })
-  
-legend("bottomleft", 
-       as.character(round(seq(-pi,pi, length=9),2)), 
-       pch=22, 
-       bty='n',
-       fill=rainbow(9, alpha=0.5),
-       border=rainbow(9, alpha=0.5),
-       col=rainbow(9, alpha=0.5),
-       title=expression(paste(alpha, " argument", sep=" ")),
-       cex=0.5,horiz = FALSE)
-
-
-par(op)
-
 ## ------------------------------------------------------------------------
-head(Cartogram <- recmap(Map <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]))
+Cartogram <- recmap(Map <- usa[!usa$name %in% c("Hawaii", "Alaska"), ])
+head(Cartogram)
 
 ## ----fig.width=8,  fig.height=4.5, fig.align='left', fig.cap="Rectangular Map Approximation."----
 
-smp<- c(29, 22, 30, 3, 17, 8, 9, 41, 18, 15, 38, 35, 21, 23, 19, 6, 31, 32, 20, 
+smp <- c(29, 22, 30, 3, 17, 8, 9, 41, 18, 15, 38, 35, 21, 23, 19, 6, 31, 32, 20, 
         28, 48, 4, 13, 14, 42, 37, 5, 16, 36 , 43, 25, 33, 12, 7, 39, 44, 2, 47,
         45, 46, 24, 10, 1,11 ,40 ,26 ,27 ,34)
+
 plot(Cartogram.Population <- recmap(M[smp, ]), 
             col.text = 'black', lwd=2)
+
+## ------------------------------------------------------------------------
+summary.recmap(M)
+summary(Cartogram.Population)
 
 ## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ population estimate as of July 1, 1975;", warning=FALSE----
 
