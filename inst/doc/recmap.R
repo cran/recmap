@@ -69,7 +69,7 @@ plot(Cartogram.Income <- recmap(M[order(M$x),]),
             col.text = 'black', lwd=2)
 
 ## ----fig.width=7, fig.height=2.5, fig.align='center', fig.retina=2, fig.cap="checkerboard fun - input, area of black regions have to be four times as big as white regions (left); solution found by a greedy random algorithm (middle); solution found by genetic algorithm (right)", fig.align='left'----
-op<-par(mar=c(0,0,0,0), mfrow=c(1, 3), bg='white')
+op <- par(mar = c(0, 0, 0, 0), mfrow = c(1, 3), bg = 'white')
 
 plot(checkerboard8x8 <- checkerboard(8),
             col=c('white','white','white','black')[checkerboard8x8$z])

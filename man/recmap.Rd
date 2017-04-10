@@ -60,13 +60,20 @@ input given statistical value z.
 }
 
 \usage{
-recmap(df)
+  recmap(V, E = data.frame(u=integer(), v=integer()))
 }
 
 \arguments{
 
-  \item{df}{is the input formatted as \code{\link{data.frame}} having the
-  columns (x, y, dx, dy, z, name) as described above.}
+  \item{V}{defines the input map regions formatted as \code{\link{data.frame}}
+  having the column names \code{c('x', 'y', 'dx', 'dy', 'z', 'name')} 
+  as described above. V could also be considered as the nodes of the pseudo dual.}
+  
+  \item{E}{defines the edges of the map region's pseudo dual graph. 
+  If \code{E} is not provided, this is the default, the pseudo dual graph is
+  composed by overlapping rectangles. If used, E must be a
+  \code{\link{data.frame}} containing two columns named \code{c('u', 'v')}
+  of type integer referencing the row number of \code{V}.}
 
 }
 

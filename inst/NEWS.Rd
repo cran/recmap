@@ -1,8 +1,20 @@
 \name{NEWS}
 \title{News for Package 'recmap'}
 
+\section{Changes until version 0.5.20 (2017-04-10)}{
+  \itemize{
+   \item added argument for the defintion of the pseudo dual graph in \code{recmap}.
+   \item fixed register native routine issue by using \code{tools::package_native_routine_registration_skeleton(".")}
+   \item added shiny example including
+   \href{https://shiny.rstudio.com/reference/shiny/latest/hoverOpts.html}{hoverOpts}
+   using \code{state.x77} data executable through
+   \code{recmap_state.x77 <- system.file("shiny-examples", "state.x77", package = "recmap")}
+   and 
+   \code{recmap_US.county <- system.file("shiny-examples", "US.county", package = "recmap")}
+  }
+}
 \section{Changes until version 0.5.16 (2017-01-15)}{
-improvements concerning \href{https://www.jstatsoft.org}{JSS} reviewer comments
+improvements concerning \href{https://www.jstatsoft.org}{JSS} reviewer comments:
   \itemize{
   
   \item added a \code{sp2recmap} method inlcuding a testthat method.

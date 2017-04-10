@@ -1,7 +1,7 @@
-//  Copyright 2016 <Christian.Panse@gmail.com>
+// Copyright 2016 <Christian.Panse@gmail.com>
 //
 // This file is part of the recmap package on CRAN.
-// https://cran.r-project.org/web/packages/recmap/index.html
+// https://CRAN.R-project.org/package=recmap
 //
 // recmap is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with recmap.  If not, see <http://www.gnu.org/licenses/>.
+// along with recmap. If not, see <http://www.gnu.org/licenses/>.
 
 
 //  Author:  Christian Panse <Christian.Panse@gmail.com>
@@ -202,7 +202,7 @@ class RecMap{
       }
 
   // TODO(cp): Think about  a destructor?
-  void push(double x, double y, double dx, double dy, double z,
+  void push_region(double x, double y, double dx, double dy, double z,
             std::string name) {
     map_region R, R1;
 
@@ -234,6 +234,11 @@ class RecMap{
     }
   }
 
+  void push_pd_edge(int u, int v){
+	  Map[u].connected.push_back(v);
+	  Map[v].connected.push_back(u);
+  }
+
   std::string warnings_pop() {
     std::string s = warnings.front(); warnings.pop_front();
     return s;
@@ -246,6 +251,7 @@ class RecMap{
   int get_intersect_count() { return intersect_count; }
 
   map_region& get_map_region(int i) { return(Cartogram[i]); }
+
 
   void ComputePseudoDual(recmapvector &M) {
     each_unique_pair(M, [this](map_region &a, map_region &b,
@@ -499,14 +505,16 @@ class RecMap{
     }
   }
 
-  void run() {
-    ComputePseudoDual(Map);
+  void run(bool computePseudoDual = true) {
+    if (computePseudoDual) ComputePseudoDual(Map);
     ComputeDesiredArea(Map, Cartogram);
     int core_region_id = ComputeCoreRegion(Map, Cartogram);
     msg.push_back("CORE REGION: " + Map[core_region_id].name);
     DrawCartogram(Map, Cartogram, core_region_id);
     ComputeError(Map, Cartogram);
   }  // run
+
+
 };
 }  // namespace crecmap
 #endif  // SRC_RECMAP_H_

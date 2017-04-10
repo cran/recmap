@@ -1,15 +1,16 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/recmap)](https://cran.r-project.org/package=recmap)
 [![](https://images.microbadger.com/badges/image/cpanse/recmap.svg)](http://microbadger.com/images/cpanse/recmap "Get your own image badge on microbadger.com")
+[![Research software impact](http://depsy.org/api/package/cran/recmap/badge.svg)](http://depsy.org/package/r/recmap)
 
 # recmap - Compute the Rectangular Statistical Cartogram
 
-This package contains an implementation of the [RecMap](http://dx.doi.org/10.1109/INFVIS.2004.57) construction algorithm (MP2).
+This package contains an implementation of the [RecMap construction algorithm (MP2)](http://dx.doi.org/10.1109/INFVIS.2004.57).
 
 
 ## Installation
 
 
-### Install from CRAN
+### from [CRAN](https://CRAN.R-project.org/package=recmap)
 
 `recmap` requires R 3.3 or later.
 
@@ -17,16 +18,26 @@ Released and tested versions of `recmap` are available via the
 [CRAN](https://CRAN.R-project.org/package=recmap) network, 
 and can be installed using the R shell via
 
-```
+```{r}
 install.package('recmap')
 ```
 
+### from [github](https://github.com/cpanse/recmap)
+
+install the latest development version
+
+```{r}
+install.packages('devtools')
+library(devtools)
+install_git('https://github.com/cpanse/recmap', build_vignettes = TRUE, quiet = FALSE)
+library(recmap)
+```
 
 ### Use the docker public | automated build [recmap image](https://hub.docker.com/r/cpanse/recmap/) 
 
 this image contains the latest build.
 
-```
+```{bash}
 docker pull cpanse/recmap \
 && docker run -d -p 8791:8787 cpanse/recmap
 ```
@@ -44,18 +55,30 @@ and a reference manual (just type `?recmap` on the R shell).
 
 Both documents are also available on the package's [CRAN](https://CRAN.R-project.org/package=recmap) page.
 
+A white paper containing more technical information and examples is
+available through [arXiv:1606.00464](https://arxiv.org/abs/1606.00464).
 
-## Examples
+## Demonstration
 
-The [recmap gallery](http://cartodraw.science/recmap/gallery/) gives an impression what can
-be expected from the cartogram drawing algorithm.
+```{r}
+# Requires to install suggested  packages
+# install.packages(c('colorspace', 'maps', 'noncensus', 'shiny'))
 
+library(colorspace)
+library(maps)
+library(shiny)
+library(recmap)
+library(noncensus)
 
-## Author
+recmap_state.x77 <- system.file("shiny-examples", "state.x77", package = "recmap")
+shiny::runApp(recmap_state.x77, display.mode = "normal")
 
-Christian Panse, 2016
+recmap_US.county <- system.file("shiny-examples", "US.county", package = "recmap")
+shiny::runApp(recmap_US.county, display.mode = "normal")
+```
 
+# Related approaches
 
-## License
-
-[GPL 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
+* [cartogram](https://CRAN.R-project.org/package=cartogram)
+* [Rcartogram](https://github.com/omegahat/Rcartogram)
+* see also [CRAN Task View: Analysis of Spatial Data](https://CRAN.R-project.org/view=Spatial)

@@ -101,6 +101,18 @@
 #' @export
 #'
 #' @examples
+#' triangle.map <- recmap:::.get_7triangles()
+#' z <- c(rep(4, 4), rep(1, 3))
+#' cols <- c(rep('white', 4), rep('grey',3))
+#' 
+#' op <- par(mfrow=c(1,2), mar=c(0, 0, 0, 0))
+#' plot(triangle.map, col=cols)
+#' 
+#'  # requires libfft.so installed in linux 
+#' if (require(getcartr) & require(Rcartogram)){
+#'   cartogram <- quick.carto(triangle.map, z, res=64)
+#'   plot(cartogram, col=cols)
+#' }
 .get_7triangles <- function(A=1){
   t<-list()
   
@@ -128,12 +140,12 @@
   h4 <- sqrt((x - cos30 * h)^2 + (y - sin30 * h)^2)
   stopifnot (abs(h3 - h4) < 0.01)
   
-  t[[2]] <- Polygons(list(Polygon(cbind(c( l/2, x, l/2 - (x-l/2)), c(h, y, y)))), 2)
-  t[[3]] <- Polygons(list(Polygon(cbind(c(l/2, l, x), c(-h3,0,y)))), 3)
-  t[[4]] <- Polygons(list(Polygon(cbind(c(l/2,  l/2 - (x-l/2), 0), c(-h3, y, 0)))), 4)
-  t[[5]] <- Polygons(list(Polygon(cbind(c(0, l/2 - (x-l/2), l/2), c(0, y, h)))), 5)
-  t[[6]] <- Polygons(list(Polygon(cbind(c(l, x, l/2), c(0, y, h)))), 6)
-  t[[7]] <- Polygons(list(Polygon(cbind(c( 0.0, l, l/2), c(0, 0, -h3)))), 7)
+  t[[2]] <- Polygons(list(Polygon(cbind(c( l / 2, x, l/2 - (x-l / 2)), c(h, y, y)))), 2)
+  t[[3]] <- Polygons(list(Polygon(cbind(c(l / 2, l, x), c(-h3,0,y)))), 3)
+  t[[4]] <- Polygons(list(Polygon(cbind(c(l / 2,  l / 2 - (x-l / 2), 0), c(-h3, y, 0)))), 4)
+  t[[5]] <- Polygons(list(Polygon(cbind(c(0, l / 2 - (x-l / 2), l / 2), c(0, y, h)))), 5)
+  t[[6]] <- Polygons(list(Polygon(cbind(c(l, x, l / 2), c(0, y, h)))), 6)
+  t[[7]] <- Polygons(list(Polygon(cbind(c( 0.0, l, l / 2), c(0, 0, -h3)))), 7)
   
   triangle.map <- SpatialPolygons(t)
 
@@ -154,9 +166,9 @@ checkerboard <- function(n = 8, ratio = 4){
   
   res <- data.frame(x = xy[, 1], 
                     y = xy[,2], 
-                    dx=0.5, 
-                    dy=0.5, 
-                    z=z, 
+                    dx = 0.5, 
+                    dy = 0.5, 
+                    z = z, 
                     name=paste(letters[1:n][xy[,1]], xy[,2], sep=''))
   
 
@@ -196,16 +208,17 @@ checkerboard <- function(n = 8, ratio = 4){
     stop('z values have to be greater equal than 0.')
   
   if (nrow(df) < 2) 
-    stop('reqires at least two map regions.')
+    stop('requires at least two map regions.')
   
   
   return (TRUE)
 }
 
-recmap <- function(df) {
 
-  if (.check_column_names(df)){
-    res <- recmap_(df)
+recmap <- function(V, E = data.frame(u=integer(), v=integer())) {
+
+  if (.check_column_names(V)){
+    res <- recmap_(V, E)
   
     class(res) = c('recmap', class(res))
     res

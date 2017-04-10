@@ -1,8 +1,11 @@
 Package: recmap
 Type: Package
 Title: Compute the Rectangular Statistical Cartogram
-Version: 0.5.16
-Author: Christian Panse
+Version: 0.5.20
+Authors@R: person("Christian", "Panse", 
+		email = "Christian.Panse@gmail.com", 
+		role = c("aut", "cre"))
+Author: Christian Panse [aut, cre]
 Maintainer: Christian Panse <Christian.Panse@gmail.com>
 Description: Provides an interface and a C++ implementation of the RecMap MP2
   construction heuristic (see 'citation("recmap")' for details). This algorithm
@@ -14,12 +17,14 @@ Description: Provides an interface and a C++ implementation of the RecMap MP2
   provided by a vignette included in this package.
 License: GPL-3
 LazyData: TRUE
-Depends: R (>= 3.3), Rcpp (>= 0.12.4), GA (>= 3.0.0), sp
+Depends: R (>= 3.3), GA (>= 3.0.0), Rcpp (>= 0.12.4), sp
+Suggests: colorspace, doParallel, knitr, maps, noncensus, shiny,
+        testthat
 SystemRequirements: C++11
-Suggests: knitr, testthat, doParallel, maps
 LinkingTo: Rcpp (>= 0.12.4)
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2017-01-15 18:36:40 UTC; cp
+BugReports: https://github.com/cpanse/recmap/issues
+Packaged: 2017-04-10 14:38:11 UTC; cp
 Repository: CRAN
-Date/Publication: 2017-01-16 00:07:01
+Date/Publication: 2017-04-10 14:54:11 UTC
