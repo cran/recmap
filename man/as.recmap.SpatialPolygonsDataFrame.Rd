@@ -1,15 +1,17 @@
-\name{sp2recmap}
+\name{as.recmap.SpatialPolygonsDataFrame}
+\alias{as.recmap.SpatialPolygonsDataFrame}
+\alias{as.recmap}
 \alias{sp2recmap}
 
 \title{
-    Export SpatialPolygonsDataFrame Object to recmap Object
+    Convert a SpatialPolygonsDataFrame Object to recmap Object
 }
 
 \description{
     The method generates a recmap class out of a \code{\link{SpatialPolygonsDataFrame}} object.
 }
 \usage{
-sp2recmap(X)
+	\method{as.recmap}{SpatialPolygonsDataFrame}(X)
 }
 
 \arguments{
@@ -29,17 +31,20 @@ Applied spatial data analysis with R, Second edition. Springer, NY.
 }
 
 \seealso{
-\itemize{
-\item{\code{\link[sp]{sp}}}
-}
+	\itemize{
+		\item{\code{\link[sp]{sp}}}
+		\item{\code{\link{as.SpatialPolygonsDataFrame}}}
+	}
 }
 
 \examples{
-  SpDf <- recmap2sp(recmap(checkerboard(8)))
+
+  SpDf <- as.SpatialPolygonsDataFrame(recmap(checkerboard(8)))
+
   summary(SpDf)
   spplot(SpDf)
 
-  summary(sp2recmap(SpDf))
+  summary(as.recmap(SpDf))
 
 
 
@@ -49,9 +54,13 @@ Applied spatial data analysis with R, Second edition. Springer, NY.
      if (requireNamespace("maptools", quietly = TRUE)) {
 	library(maptools)
         data(wrld_simpl)
-	afr <- sp2recmap(wrld_simpl[wrld_simpl$REGION==2, ])
+
+	afr <- as.recmap(wrld_simpl[wrld_simpl$REGION==2, ])
+	is.recmap(afr)
 
 	afr$z <- afr$POP2005 
+
+	is.recmap(afr)
 	afr <- afr[afr$z > 0, ]
 
 	# make map overlap to generate a connected pseudo dual

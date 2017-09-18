@@ -1,4 +1,4 @@
-## ----fig.width=7, fig.retina=2, fig.align='left', fig.cap="Rectangular Cartogram of the U.S. election 2004; The area corresponds to the number of electors (color indicates the party red: democrats / blue: republican; the color intensity ~ outcome of the vote.). The graphic was computed by using the original implementation of the construction heuristic RecMap MP2 introduced in [@recmap].", echo=FALSE, warning=FALSE, comment="ccc", error=FALSE, message=FALSE----
+## ----fig.width=7, fig.retina=2, fig.align='left', fig.cap="Rectangular Cartogram of the U.S. election 2004; The area corresponds to the number of electors (color indicates the party red: democrats / blue: Republican; the color intensity ~ outcome of the vote.). The graphic was computed by using the original implementation of the construction heuristic RecMap MP2 introduced in [@recmap].", echo=FALSE, warning=FALSE, comment="ccc", error=FALSE, message=FALSE----
 
 library(recmap)
 op<-par(mar=c(0,0,0,0), bg='black')
@@ -67,6 +67,11 @@ usa$z <- state.x77[, 'Frost']
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
 plot(Cartogram.Income <- recmap(M[order(M$x),]), 
             col.text = 'black', lwd=2)
+
+## ----eval=FALSE----------------------------------------------------------
+#  library(shiny)
+#  recmap_state.x77 <- system.file("shiny-examples", "state.x77", package = "recmap")
+#  shiny::runApp(recmap_state.x77, display.mode = "normal")
 
 ## ----fig.width=7, fig.height=2.5, fig.align='center', fig.retina=2, fig.cap="checkerboard fun - input, area of black regions have to be four times as big as white regions (left); solution found by a greedy random algorithm (middle); solution found by genetic algorithm (right)", fig.align='left'----
 op <- par(mar = c(0, 0, 0, 0), mfrow = c(1, 3), bg = 'white')

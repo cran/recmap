@@ -1,6 +1,13 @@
-# This is the server logic for a Shiny web application using state.x77 data
+  # This is the server logic for a Shiny web application using state.x77 data
 #
 # https://CRAN.R-project.org/package=recmap
+
+library(colorspace)
+library(shiny)
+library(recmap)
+
+
+
 
 # source: vignette of https://CRAN.R-project.org/package=colorspace 
 pal <- function(col, border = "light gray", ...) {
@@ -60,6 +67,11 @@ shinyServer(function(input, output, session) {
   
   cartogram <- reactive({
     
+    progress <- shiny::Progress$new(session = session, min = 0, max = 1)
+    progress$set(message = "recmapGA init")
+    on.exit(progress$close())
+    options(warn = -1)
+    
     usa <- data.frame(x = state.center$x, 
                       y = state.center$y, 
                       # make the rectangles overlapping by correcting lines of longitude distance
@@ -80,6 +92,7 @@ shinyServer(function(input, output, session) {
     
     set.seed(1)
     
+    
     recmapGA <- ga(type = "permutation", 
                    min = 1, max = nrow(M),
                    fitness = recmapFitness, 
@@ -88,10 +101,18 @@ shinyServer(function(input, output, session) {
                    maxiter = input$GAmaxiter,
                    pmutation = input$GApmutation,
                    parallel=TRUE,
-                   run = input$GArun)
+                   run = input$GArun, 
+                   monitor = function(object, digits = getOption("digits"), ...)
+                     {
+                     fitness <- na.exclude(object@fitness)
+                     sumryStat <- c(mean(fitness), max(fitness))
+                     
+                     progress$set(message = "GA", 
+                                  detail = paste("iteration", object@iter, "Best Fitness = ", round(sumryStat[2], 5)),
+                                  value = object@iter / input$GAmaxiter)
+                   })
     
     C <- recmap(M[recmapGA@solution[1, ], ])
- 
     list(cartogram=C, solution=recmapGA@solution[1, ])
   })
   

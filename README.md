@@ -19,7 +19,7 @@ Released and tested versions of `recmap` are available via the
 and can be installed using the R shell via
 
 ```{r}
-install.package('recmap')
+install.packages('recmap')
 ```
 
 ### from [github](https://github.com/cpanse/recmap)
@@ -64,11 +64,7 @@ available through [arXiv:1606.00464](https://arxiv.org/abs/1606.00464).
 # Requires to install suggested  packages
 # install.packages(c('colorspace', 'maps', 'noncensus', 'shiny'))
 
-library(colorspace)
-library(maps)
 library(shiny)
-library(recmap)
-library(noncensus)
 
 recmap_state.x77 <- system.file("shiny-examples", "state.x77", package = "recmap")
 shiny::runApp(recmap_state.x77, display.mode = "normal")
@@ -77,7 +73,7 @@ recmap_US.county <- system.file("shiny-examples", "US.county", package = "recmap
 shiny::runApp(recmap_US.county, display.mode = "normal")
 ```
 
-# Related approaches
+## Related approaches
 
 * [cartogram](https://CRAN.R-project.org/package=cartogram)
 * [Rcartogram](https://github.com/omegahat/Rcartogram)
