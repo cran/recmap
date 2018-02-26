@@ -15,7 +15,7 @@ usa <- data.frame(x=state.center$x,
     name = state.name)
 
 ## ----fig.width=7, fig.height=3-------------------------------------------
-op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
+op <- par(mfrow=c(1,1), mar=c(0,0,0,0))
 library(recmap)
 plot.recmap(M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ],  
             col.text = 'black', lwd=2)
@@ -39,7 +39,7 @@ summary(Cartogram.Population)
 
 ## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ population estimate as of July 1, 1975;", warning=FALSE----
 
-op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
+op <- par(mfrow=c(1,1), mar=c(0,0,0,0))
 usa$z <- state.x77[, 'Population']
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
 plot(Cartogram.Population <- recmap(M[order(M$x),]), 
@@ -47,26 +47,24 @@ plot(Cartogram.Population <- recmap(M[order(M$x),]),
 
 
 ## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ population estimate as of July 1, 1975; a better index order has been chosen to minimize the relative position error."----
-op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
+op <- par(mfrow=c(1,1), mar=c(0,0,0,0))
 # index order
 
 smp <- c(20,47,4,40,9,6,32,33,3,10,34,22,2,28,15,12,39,7,42,45,19,13,43,30,24,
          25,11,17,37,41,26,29,21,35,8,36,14,16,31,48,46,38,23,18,1,5,44,27)
 
-plot(Cartogram.Population <- recmap(M[smp,]), col.text = 'black', lwd=2)
+plot(Cartogram.Population <- recmap(M[smp,]), col.text = 'black', lwd = 2)
 
 ## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ capita income (1974);"----
-op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
 usa$z <- state.x77[, 'Income']
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
-plot(Cartogram.Income <- recmap(M[order(M$x),]), col.text = 'black', lwd=2)
+plot(Cartogram.Income <- recmap(M[order(M$x),]), col.text = 'black', lwd = 2)
 
 ## ----fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ mean number of days with minimum temperature below freezing (1931–1960) in capital or large city;"----
-op<-par(mfrow=c(1,1), mar=c(0,0,0,0))
 usa$z <- state.x77[, 'Frost'] 
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
 plot(Cartogram.Income <- recmap(M[order(M$x),]), 
-            col.text = 'black', lwd=2)
+            col.text = 'black', lwd = 2)
 
 ## ----eval=FALSE----------------------------------------------------------
 #  library(shiny)
@@ -87,7 +85,7 @@ index.greedy <- c(8, 56, 18, 5, 13, 57, 3, 37, 62, 58, 7, 16, 40, 59, 17, 34,
                   23)
 
 plot(Cartogram.checkerboard8x8.greedy <- recmap(checkerboard8x8[index.greedy,]),
-            col=c('white','white','white','black')[Cartogram.checkerboard8x8.greedy$z])
+            col = c('white','white','white','black')[Cartogram.checkerboard8x8.greedy$z])
 
 # found by a genetic algorithm
 index.ga <- c(52, 10, 27, 63, 7, 20, 32, 18, 47, 28, 6, 55, 11, 61, 38, 50, 5,
@@ -96,7 +94,7 @@ index.ga <- c(52, 10, 27, 63, 7, 20, 32, 18, 47, 28, 6, 55, 11, 61, 38, 50, 5,
               30, 15, 39, 12, 60, 48, 16, 23, 46, 42, 13, 54, 14, 9)
 
 plot(Cartogram.checkerboard8x8.ga <- recmap(checkerboard8x8[index.ga,]),
-            col=c('white','white','white','black')[Cartogram.checkerboard8x8.ga$z])
+            col = c('white','white','white','black')[Cartogram.checkerboard8x8.ga$z])
 
 
 ## ------------------------------------------------------------------------
