@@ -108,7 +108,7 @@ struct mbb_node {
     double dy = a.dy + c.dy + eps;
     double dx = a.dx + c.dx + eps;
 
-    if (std::sin(alpha) >= 0 & std::cos(alpha) >= 0) {
+    if (std::sin(alpha) >= 0 && std::cos(alpha) >= 0) {
       // Quad I
       tanx = a.x + (dx * std::tan(alpha));
       tany = a.y + (dy * std::tan(PI/2 - alpha));
@@ -229,9 +229,9 @@ class RecMap{
     Cartogram.push_back(R1);
     num_regions++;
 
-    if (num_regions != Map.size()) {
+    //if (num_regions != Map.size()) {
       // TODO(cp): call an exception?
-    }
+    //}
   }
 
   void push_pd_edge(int u, int v){
@@ -472,7 +472,12 @@ class RecMap{
       for (const auto & b : M) {
         gammaM = get_angle(M[a.id], M[b.id]);
         gammaC = get_angle(C[a.id], C[b.id]);
-        delta = fabs(gammaC - gammaM) / C.size();
+
+	if ((gammaM < 0 && gammaC > 0) || ( gammaM > 0 && gammaC < 0))
+          delta = fabs(gammaC + gammaM) / C.size();
+	else
+          delta = fabs(gammaC - gammaM) / C.size();
+
         C[a.id].relative_position_error += delta;
       }
 
@@ -480,7 +485,11 @@ class RecMap{
       for (const auto & idx : a.connected) {
         gammaM = get_angle(M[a.id], M[idx]);
         gammaC = get_angle(C[a.id], C[idx]);
-        delta = fabs(gammaC - gammaM) / a.connected.size();
+	if ((gammaM < 0 && gammaC > 0) || ( gammaM > 0 && gammaC < 0))
+          delta = fabs(gammaC + gammaM) / a.connected.size();
+	else
+          delta = fabs(gammaC - gammaM) / a.connected.size();
+
         C[a.id].relative_position_neighborhood_error += delta;
       }
 

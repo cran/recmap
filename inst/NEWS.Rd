@@ -1,10 +1,18 @@
 \name{NEWS}
 \title{News for Package 'recmap'}
 
+\section{Changes until version 0.5.31 (2018-03-23)}{
+  \itemize{
+	  \item added jss2711 submission as vignette file.
+	  \item added jss2711 data.
+	  \item replace gaMonitor2 by gaMonitor (GA3.1).
+  }
+}
+
 \section{Changes until version 0.5.24 (2017-09-16)}{
   \itemize{
-	  \item spell check cosmetics
-	  \item added a progress window in the shiny apps
+	  \item spell check cosmetics.
+	  \item added a progress window in the shiny apps.
 	  \item added \code{is.recmap} function.
 	  \item replaced \code{recmap2sp} and \code{sp2recmap} functions by S3methods \code{as.SpatialPolygonsDataFrame} and \code{as.recmap}.
   }

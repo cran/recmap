@@ -273,9 +273,9 @@ as.SpatialPolygonsDataFrame.recmap <- function(x, df = NULL, ...){
                                                row.names = x$name)))}
   
   return(SpatialPolygonsDataFrame(SpP, df))
-}
+  }
 
-message("recmap2sp failed.")
+message("as.SpatialPolygonsDataFrame.recmap failed.")
 
 NULL
 }
@@ -507,7 +507,7 @@ recmapGA <- function(Map,
                       maxiter = 10, 
                       run = maxiter,
                       monitor = if(interactive()) 
-                      { gaMonitor2 } 
+                      { gaMonitor } 
                      else FALSE,
                       parallel = FALSE, ...){
   GA <- ga(type = "permutation", 
