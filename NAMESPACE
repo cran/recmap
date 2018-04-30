@@ -25,6 +25,7 @@ export("plot.recmapGRASP")
 export("summary.recmap")
 export("summary.recmapGA")
 
+S3method(all.equal, recmap)
 S3method(plot, recmap)
 S3method(plot, recmapGA)
 S3method(plot, recmapGRASP)

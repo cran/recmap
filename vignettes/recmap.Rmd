@@ -1,13 +1,16 @@
 ---
-title: "Getting Started with recmap"
+title: "Getting Started with **recmap**"
 author: "Christian Panse"
 date: "`r Sys.Date()`"
 bibliography:
   - recmap.bib
 csl: ieee.csl
-output: 
-  rmarkdown::html_vignette:
+output:
+  tufte::tufte_html: default
+  tufte::tufte_handout:
     toc: true
+    citation_package: natbib
+    latex_engine: xelatex
 vignette: >
   %\VignetteIndexEntry{Getting Started with recmap}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,8 +27,8 @@ public health data.
 The input consists of a map represented by overlapping rectangles.
 This map is defined by the following parameters for each map region:
 
-- a tuple of (x, y) values corresponding to the (longitude, latitude) position 
-- a tuple of (dx, dy) of expansion along (longitude, latitude) 
+- a tuple of (x, y) values corresponding to the (longitude, latitude) position,
+- a tuple of (dx, dy) of expansion along (longitude, latitude), 
 - and a statistical value z.
 
 The (x, y) coordinates represent the center of the minimal bounding boxes (MBB),
@@ -53,7 +56,15 @@ the as input given statistical value z.
 
 An example of a rectangular cartogram drawing is shown below.
 
-```{r fig.width=7, fig.retina=2, fig.align='left', fig.cap="Rectangular Cartogram of the U.S. election 2004; The area corresponds to the number of electors (color indicates the party red: democrats / blue: Republican; the color intensity ~ outcome of the vote.). The graphic was computed by using the original implementation of the construction heuristic RecMap MP2 introduced in [@recmap].", echo=FALSE, warning=FALSE, comment="ccc", error=FALSE, message=FALSE}
+```{r eval = TRUE, echo = FALSE}
+options(prompt = "R> ",
+  continue = "+  ",
+  width = 70,
+  useFancyQuotes = FALSE,
+  warn = -1)
+```
+
+```{r fig.width=7, fig.height=3.5, fig.retina=2, fig.align='left', fig.cap="Rectangular Cartogram of the U.S. election 2004; The area corresponds to the number of electors (color indicates the party red: democrats / blue: Republican; the color intensity ~ outcome of the vote.). The graphic was computed by using the original implementation of the construction heuristic RecMap MP2 introduced in [@recmap].", echo=FALSE, warning=FALSE, comment="ccc", error=FALSE, message=FALSE}
 
 library(recmap)
 op <- par(mar = c(0,0,0,0), bg = 'black')
@@ -93,7 +104,7 @@ generate valid input having only the (x, y) coordinates of the map region.
 
 ```{r fig.width=7, fig.height=3}
 library(recmap)
-op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0))
+op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
 plot.recmap(M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ],  
             col.text = 'black', lwd=2)
 ```
@@ -103,8 +114,10 @@ plot.recmap(M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ],
 The index order of the input map
 has an impact to the resulting cartogram. This algorithmic property is caused due to 
 the computation of the dual graph. In [@recmap] a genetic algorithm was applied 
-as metaheuristic. Due to the limited compute resources on the CRAN package 
-build process no metaheuristic will be executed to build this vignette file.
+as metaheuristic. 
+Due to the limited computing resources on the CRAN 
+check systems, we do not use all the potential of the metaheuristic.
+
 
 Study the examples of the reference manual `?recmapGA` on 
 how the [GA](https://cran.r-project.org/package=GA) package can be used.
@@ -140,7 +153,7 @@ smp <- c(29, 22, 30, 3, 17, 8, 9, 41, 18, 15, 38, 35, 21, 23, 19, 6, 31, 32, 20,
         28, 48, 4, 13, 14, 42, 37, 5, 16, 36 , 43, 25, 33, 12, 7, 39, 44, 2, 47,
         45, 46, 24, 10, 1,11 ,40 ,26 ,27 ,34)
 
-op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0))
+op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
 plot(Cartogram.Population <- recmap(M[smp, ]), 
             col.text = 'black', lwd=2)
 ```
@@ -154,7 +167,7 @@ summary(Cartogram.Population)
 
 ```{r fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ population estimate as of July 1, 1975;", warning=FALSE}
 
-op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0))
+op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
 usa$z <- state.x77[, 'Population']
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
 plot(Cartogram.Population <- recmap(M[order(M$x),]), 
@@ -168,7 +181,7 @@ plot(Cartogram.Population <- recmap(M[order(M$x),]),
 smp <- c(20,47,4,40,9,6,32,33,3,10,34,22,2,28,15,12,39,7,42,45,19,13,43,30,24,
          25,11,17,37,41,26,29,21,35,8,36,14,16,31,48,46,38,23,18,1,5,44,27)
 
-op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0))
+op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
 plot(Cartogram.Population <- recmap(M[smp,]), col.text = 'black', lwd = 2)
 ```
 
@@ -177,28 +190,35 @@ plot(Cartogram.Population <- recmap(M[smp,]), col.text = 'black', lwd = 2)
 ```{r fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ capita income (1974);"}
 usa$z <- state.x77[, 'Income']
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
-op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0))
+op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
 plot(Cartogram.Income <- recmap(M[order(M$x),]), col.text = 'black', lwd = 2)
 ```
 
 ## `state.x77[, 'Frost']`
 
-```{r fig.width=8, fig.height=4, fig.align='left', fig.cap="Area ~ mean number of days with minimum temperature below freezing (1931–1960) in capital or large city;" }
+```{r fig.width=8, fig.height=4, fig.align='left', warnings = FALSE, fig.cap="Area ~ mean number of days with minimum temperature below freezing (1931–1960) in capital or large city;" }
 usa$z <- state.x77[, 'Frost'] 
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
-op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0))
-plot(Cartogram.Income <- recmap(M[order(M$x),]), 
+op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
+Frost <- recmapGA(M, seed = 1)
+plot(Frost$Cartogram, 
             col.text = 'black', lwd = 2)
 ```
 
-More examples using `state.x77` data and `shiny` application are 
-available through <https://recmap.shinyapps.io/state_x77/> or by running the following code snipped.
+```{r}
+summary(Frost)
+```
 
-
+More interactive examples using `state.x77` data are available by
+running the code snippet below. 
 ```{r eval=FALSE}
+# Requires to install the suggested packages
+# install.packages(c('colorspace', 'maps', 'noncensus', 'shiny'))
+
 library(shiny)
-recmap_state.x77 <- system.file("shiny-examples", "state.x77", package = "recmap")
-shiny::runApp(recmap_state.x77, display.mode = "normal")
+
+recmap_shiny <- system.file("shiny-examples", package = "recmap")
+shiny::runApp(recmap_shiny, display.mode = "normal")
 ```
 
 ## Synthetic input maps - checkerboard

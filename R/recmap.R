@@ -175,8 +175,19 @@ checkerboard <- function(n = 8, ratio = 4){
   
   res <- res[with(res, order(x, y)), ]
   row.names(res) <- 1:nrow(res); # paste(letters[1:n][xy[,1]], xy[,2], sep='')
+  attr(res, 'Map.name') <- paste("checkerboard", n, "x", n)
+  attr(res, 'Map.area') <- "1:4"
   class(res) = c('recmap', class(res))
   res
+}
+
+all.equal.recmap <- function(target, current, ...){
+  all.equal(target$x, current$x) &
+    all.equal(target$y, current$y) &
+    all.equal(target$dx, current$dx) & 
+    all.equal(target$dy, current$dy) &
+    all.equal(target$z, current$z) &
+    all.equal(target$name, current$name)
 }
 
 is.recmap <- function(object){
@@ -312,6 +323,14 @@ as.recmap.SpatialPolygonsDataFrame <- function(X){
    df <- cbind(df, X@data) 
 
    if (is.recmap(df)){
+   	if (is.null(attr(X, 'Map.name'))){
+   		attr(df, 'Map.name')  <- ""
+	}
+   	if (is.null(attr(X, 'Map.area'))){
+   		attr(df, 'Map.area')  <- ""
+   	}
+	df <- df[, c('x', 'y', 'dx', 'dy', 'z', 'name')]
+	row.names(df) <- 1:nrow(df)
   	class(df) <- c('recmap', class(df))
    	return(df)
    } else if (!'z' %in% names(df)){
@@ -468,7 +487,8 @@ recmapGRASP <-
       iteration <- iteration + 1
       
       # Construct Greedy Randomized Solution
-      res <- parallel::mclapply(1:n.samples, function(x){
+      # res <- parallel::mclapply(1:n.samples, function(x){
+      res <- lapply(1:n.samples, function(x){
         smp <- sample.int(nrow(input))
         list(solution = smp,
              fitness = fitness(smp, input))
@@ -497,6 +517,7 @@ recmapGRASP <-
          )
     
     class(r) <- c(class(r), 'recmapGRASP')
+    r
 }
 
 
@@ -510,6 +531,7 @@ recmapGA <- function(Map,
                       { gaMonitor } 
                      else FALSE,
                       parallel = FALSE, ...){
+  start_time <- Sys.time()
   GA <- ga(type = "permutation", 
            fitness = fitness, 
            Map = Map,
@@ -519,12 +541,36 @@ recmapGA <- function(Map,
            maxiter = maxiter, 
            run = run, 
            parallel = parallel,
-           pmutation = pmutation, ...)
-  
+           pmutation = pmutation, 
+	   ...)
+  end_time <- Sys.time()
+  diff_time <- as.numeric(difftime(end_time, start_time, units = "secs"))
+   if (is.null(attr(Map, 'Map.name'))){
+   	attr(Map, 'Map.name')  <- ""
+	}
+   if (is.null(attr(Map, 'Map.area'))){
+   	attr(Map, 'Map.area')  <- ""
+   }
   res <- list(GA = GA, 
-       Map = Map[GA@solution[1, ], ], 
-       Cartogram = recmap(Map[GA@solution[1, ], ]))
-
+              Map = Map[GA@solution[1, ], ], 
+              Cartogram = recmap(Map[GA@solution[1, ], ]),
+	      Summary = data.frame(
+      Map.name = attr(Map, 'Map.name'),
+      Map.area = tolower(attr(Map, 'Map.area')),
+      Map.number.regions = length(GA@solution[1,]),
+      Map.error.area = round(.compute_area_error(Map), 2),
+      GA.population.size = as.integer(GA@popSize),
+      GA.number.generation = nrow(GA@summary),
+      GA.pmutation = GA@pmutation,
+      GA.fitness = round(GA@fitnessValue, 2),
+      GA.parallel = parallel,
+      GA.number.recmaps_a_second = round((as.integer(GA@popSize) * nrow(GA@summary) / diff_time), 1),
+      Sys.compute.time = round(diff_time, 1),
+      Sys.machine = Sys.info()['machine'],
+      Sys.sysname = Sys.info()['sysname'])
+    )
+  
+  
   class(res) = c('recmapGA', class(res))
   res
 }
