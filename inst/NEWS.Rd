@@ -1,6 +1,19 @@
 \name{NEWS}
 \title{News for Package 'recmap'}
 
+\section{Changes until version 0.5.36 (2018-08-27)}{
+  \itemize{
+	  \item incorporate CITATION file to refer back to the JSS manuscript doi 10.18637/jss.v086.c01.
+  }
+}
+
+\section{Changes until version 0.5.35 (2018-06-01)}{
+  \itemize{
+	  \item \href{https://github.com/cpanse/recmap/issues/11}{issues 11}.
+	  \item replaced items in data/jss2711.RData.
+  }
+}
+
 \section{Changes until version 0.5.33 (2018-05-01)}{
   \itemize{
 	  \item mv src/recmap.h inst/include/recmap
@@ -10,7 +23,7 @@
 
 \section{Changes until version 0.5.32 (2018-03-24)}{
   \itemize{
-	  \item added test-jss2711(renamed test-recmapGA.R) checking Figure 7, 11, 12 ,13
+	  \item added test-jss2711(renamed test-recmapGA.R) checking Figure 7, 11, 12 ,13.
   }
 }
 

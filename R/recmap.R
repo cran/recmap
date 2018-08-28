@@ -182,12 +182,12 @@ checkerboard <- function(n = 8, ratio = 4){
 }
 
 all.equal.recmap <- function(target, current, ...){
-  all.equal(target$x, current$x) &
-    all.equal(target$y, current$y) &
-    all.equal(target$dx, current$dx) & 
-    all.equal(target$dy, current$dy) &
-    all.equal(target$z, current$z) &
-    all.equal(target$name, current$name)
+  isTRUE(all.equal(target$x, current$x, ...)) &
+  isTRUE(all.equal(target$y, current$y, ...)) &
+  isTRUE(all.equal(target$dx, current$dx, ...)) & 
+  isTRUE(all.equal(target$dy, current$dy, ...)) &
+  isTRUE(all.equal(target$z, current$z, ...)) &
+  isTRUE(all.equal(target$name, current$name, ...))
 }
 
 is.recmap <- function(object){
@@ -359,7 +359,7 @@ as.recmap.SpatialPolygonsDataFrame <- function(X){
 
 .compute_topology_error <- function(x){
   
-  if (sum(x$topology.error == 100) > 0)
+  if (sum(x$topology.error == -1) > 0)
     return(Inf)
   
   sum(x$topology.error) 
@@ -467,7 +467,7 @@ plot.recmap <- function(x, col='#00000011', col.text = 'grey', border = 'darkgre
   # a map region could not be placed; 
   # accept only feasible solutions!
   
-  if (sum(Cartogram$topology.error == 100) > 0){return (0)}
+  if (sum(Cartogram$topology.error == -1) > 0){return (0)}
   
   1 / sum(Cartogram$relpos.error)
 }
