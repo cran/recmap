@@ -8,7 +8,7 @@ options(prompt = "R> ",
 ## ----fig.width=7, fig.height=3.5, fig.retina=2, fig.align='left', fig.cap="Rectangular Cartogram of the U.S. election 2004; The area corresponds to the number of electors (color indicates the party red: democrats / blue: Republican; the color intensity ~ outcome of the vote.). The graphic was computed by using the original implementation of the construction heuristic RecMap MP2 introduced in [@recmap].", echo=FALSE, warning=FALSE, comment="ccc", error=FALSE, message=FALSE----
 
 library(recmap)
-op <- par(mar = c(0,0,0,0), bg = 'black')
+op <- par(mar = c(0,0,0,0), bg = NA)
 recmap:::.draw_recmap_us_state_ev()
 par(op)
 # detach("package:recmap", unload=TRUE)
@@ -98,7 +98,7 @@ summary(Frost)
 #  shiny::runApp(recmap_shiny, display.mode = "normal")
 
 ## ----fig.width=7, fig.height=2.5, fig.align='center', fig.retina=2, fig.cap="checkerboard fun - input, area of black regions have to be four times as big as white regions (left); solution found by a greedy random algorithm (middle); solution found by genetic algorithm (right)", fig.align='left'----
-op <- par(mar = c(0, 0, 0, 0), mfrow = c(1, 3), bg = 'white')
+op <- par(mar = c(0, 0, 0, 0), mfrow = c(1, 3), bg = NA)
 
 plot(checkerboard8x8 <- checkerboard(8),
             col=c('white','white','white','black')[checkerboard8x8$z])

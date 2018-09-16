@@ -56,7 +56,7 @@ or stand alone
 docker run -it -p 8787:8787 cpanse/recmap R -e "library(shiny); recmap_shiny <- system.file('shiny-examples', package = 'recmap'); shiny::runApp(recmap_shiny, display.mode = 'normal', port=8787, host='0.0.0.0')"
 ```
 
-conect to the docker host:8787
+connect to the docker host:8787
 
 ## Documentation
 
@@ -67,15 +67,22 @@ and a reference manual (just type `?recmap` on the R shell).
 Both documents are also available on the package's 
 [CRAN](https://CRAN.R-project.org/package=recmap) page.
 A white paper containing more technical information and examples is
-available through [arXiv:1606.00464](https://arxiv.org/abs/1606.00464).
+available through [jss.v086.c01](http://dx.doi.org/10.18637/jss.v086.c01).
 
 ## Demonstration
 
+animation of the construction algorithm
 
+![animated GIF of the construction algorithm](https://github.com/cpanse/recmap/blob/master/vignettes/graphics/rectangular_statistical_cartogram_construction_animation.gif)
+
+
+interactive shiny application
 
 ```{r}
 # Requires to install suggested  packages
-# install.packages(c('colorspace', 'maps', 'noncensus', 'shiny'))
+pkgs <- c('colorspace', 'maps', 'noncensus', 'shiny')
+pkgs <- pkgs[(!pkgs %in% unique(installed.packages()[,'Package']))]
+if(length(pkgs) > 0){install.packages(pkgs)}
 
 library(shiny)
 recmap_shiny <- system.file('shiny-examples', package = 'recmap')
@@ -85,7 +92,7 @@ shiny::runApp(recmap_shiny, display.mode = 'normal')
 
 ## Related approaches
 * [Rectangular Cartograms: the game](http://www.win.tue.nl/~speckman/demos/game/index.html), [Rectangular Cartograms](http://www.win.tue.nl/~speckman/Cartograms/SoccerCarto.html)
-* https://CRAN.R-project.org/package=cartogram
+* cartogram: Create Cartograms with R [https://CRAN.R-project.org/package=cartogram](https://CRAN.R-project.org/package=cartogram)
 * [Rcartogram](https://github.com/omegahat/Rcartogram)
 * [High-performance software to produce flow-based cartograms.](https://github.com/Flow-Based-Cartograms/go_cart) 
 * see also [CRAN Task View: Analysis of Spatial Data](https://CRAN.R-project.org/view=Spatial)
