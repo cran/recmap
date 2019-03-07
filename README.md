@@ -71,10 +71,6 @@ available through [jss.v086.c01](http://dx.doi.org/10.18637/jss.v086.c01).
 
 ## Demonstration
 
-animation of the construction algorithm
-
-![animated GIF of the construction algorithm](https://github.com/cpanse/recmap/blob/master/vignettes/graphics/rectangular_statistical_cartogram_construction_animation.gif)
-
 
 interactive shiny application
 
@@ -87,6 +83,16 @@ if(length(pkgs) > 0){install.packages(pkgs)}
 library(shiny)
 recmap_shiny <- system.file('shiny-examples', package = 'recmap')
 shiny::runApp(recmap_shiny, display.mode = 'normal')
+```
+
+if you want to run the recmap shiny demonstration as stand-alone application
+using Linux and Apple systems use the `Terminal` application add the following 
+code to your alias file, e.g., `$HOME/.bashrc`
+
+```
+alias recmapShiny="R -e \"library(shiny); \
+  recmap_shiny <- system.file('shiny-examples', package = 'recmap'); \
+  shiny::runApp(recmap_shiny, display.mode = 'normal', launch.browser=TRUE)\""
 ```
 
 

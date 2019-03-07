@@ -1,7 +1,7 @@
 Package: recmap
 Type: Package
 Title: Compute the Rectangular Statistical Cartogram
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: person("Christian", "Panse", 
 		email = "Christian.Panse@gmail.com", 
 		role = c("aut", "cre"),
@@ -25,6 +25,6 @@ LinkingTo: Rcpp (>= 0.12.4)
 VignetteBuilder: knitr
 NeedsCompilation: yes
 BugReports: https://github.com/cpanse/recmap/issues
-Packaged: 2018-09-16 14:31:34 UTC; cp
+Packaged: 2019-03-06 14:01:07 UTC; cp
 Repository: CRAN
-Date/Publication: 2018-09-16 15:20:03 UTC
+Date/Publication: 2019-03-07 01:00:03 UTC

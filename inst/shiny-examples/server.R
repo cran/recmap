@@ -282,4 +282,8 @@ shinyServer(function(input, output, session) {
     }
   )
   
+  #---- sessionInfo ----
+  output$sessionInfo <- renderPrint({
+    capture.output(sessionInfo())
+  })
 })
