@@ -7,15 +7,13 @@
 
 # recmap - Compute the Rectangular Statistical Cartogram 
 
-This package implementats of the [RecMap construction algorithm (MP2)](http://dx.doi.org/10.1109/INFVIS.2004.57).
+This package implements the [RecMap construction algorithm (MP2)](http://dx.doi.org/10.1109/INFVIS.2004.57) using the [GA]( https://CRAN.R-project.org/package=GA) CRAN package as metaheuristic.
 
+## 1. Installation
 
-## Installation
+use [CRAN](https://CRAN.R-project.org/package=recmap)
 
-
-### from [CRAN](https://CRAN.R-project.org/package=recmap)
-
-`recmap` requires R 3.3 or later.
+`recmap` requires R 3.5 or later.
 
 Released and tested versions of `recmap` are available via
 [CRAN](https://CRAN.R-project.org/package=recmap), 
@@ -25,40 +23,7 @@ and can be installed using the following code
 install.packages('recmap')
 ```
 
-### from [github](https://github.com/cpanse/recmap)
-
-the code below installs the latest development version
-
-```{r}
-install.packages('devtools')
-library(devtools)
-install_github('cpanse/recmap', build_vignettes = TRUE, quiet = FALSE)
-browseVignettes('recmap')
-```
-
-### Use the docker public | automated build [recmap image](https://hub.docker.com/r/cpanse/recmap/) 
-
-this image contains the latest build.
-
-```{bash}
-docker pull cpanse/recmap \
-&& docker run -d -p 8791:8787 cpanse/recmap
-```
-
-connect to http://yourdockerhost:8791  using a web browser
-
-* username: rstudio
-* password: rstudio
-
-or stand alone
-
-```{bash}
-docker run -it -p 8787:8787 cpanse/recmap R -e "library(shiny); recmap_shiny <- system.file('shiny-examples', package = 'recmap'); shiny::runApp(recmap_shiny, display.mode = 'normal', port=8787, host='0.0.0.0')"
-```
-
-connect to the docker host:8787
-
-## Documentation
+## 2. Documentation
 
 The package ships with a package 
 [vignette](https://CRAN.R-project.org/package=recmap/vignettes/recmap.html)
@@ -69,10 +34,9 @@ Both documents are also available on the package's
 A white paper containing more technical information and examples is
 available through [jss.v086.c01](http://dx.doi.org/10.18637/jss.v086.c01).
 
-## Demonstration
+## 3. Demonstration
 
-
-interactive shiny application
+Run an interactive shiny application
 
 ```{r}
 # Requires to install suggested  packages
@@ -85,7 +49,7 @@ recmap_shiny <- system.file('shiny-examples', package = 'recmap')
 shiny::runApp(recmap_shiny, display.mode = 'normal')
 ```
 
-if you want to run the recmap shiny demonstration as stand-alone application
+Run the recmap shiny demonstration as a stand-alone application
 using Linux and Apple systems use the `Terminal` application add the following 
 code to your alias file, e.g., `$HOME/.bashrc`
 
@@ -95,8 +59,22 @@ alias recmapShiny="R -e \"library(shiny); \
   shiny::runApp(recmap_shiny, display.mode = 'normal', launch.browser=TRUE)\""
 ```
 
+execute 
 
-## Related approaches
+`. $HOME/.bashrc && recmapShiny` 
+
+## 4. (Frequently) Asked Questions
+
+### 4.1 Is there an easy way to convert a `recmap` object to an [`sf`](https://CRAN.R-project.org/package=sf ) object?
+
+
+Use [`as.SpatialPolygonsDataFrame`](https://github.com/cpanse/recmap/blob/da2f90d2edb3feda7464bb543147d2908851e92b/R/recmap.R#L265),
+see also issue [#13](https://github.com/cpanse/recmap/issues/13). 
+The `as.recmap` function performs the transformation from a
+`SpatialPolygonsDataFrame` into a `recmap` compatible object.
+
+## 5. Related approaches
+
 * [Rectangular Cartograms: the game](http://www.win.tue.nl/~speckman/demos/game/index.html), [Rectangular Cartograms](http://www.win.tue.nl/~speckman/Cartograms/SoccerCarto.html)
 * cartogram: Create Cartograms with R [https://CRAN.R-project.org/package=cartogram](https://CRAN.R-project.org/package=cartogram)
 * [Rcartogram](https://github.com/omegahat/Rcartogram)
