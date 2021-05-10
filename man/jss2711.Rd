@@ -13,7 +13,7 @@ jss2711 data
 
 \description{
 jss2711 contains the replication materials (input and output) for the 
-\href{http://dx.doi.org/10.18637/jss.v086.c01}{jss.v086.c01} manuscript's
+\doi{10.18637/jss.v086.c01} manuscript's
 Figures 4, 5, 6, 7, 11, 12, and 13.
 }
 
@@ -57,7 +57,7 @@ Generated on a MacBook Pro (Retina, 13-inch, Mid 2014).}
   \itemize{
     \item {input map rectangles derived from: \code{https://census.edina.ac.uk/ukborders};
       Contains OS data Crown copyright [and database right] (2016);}
-    \item {Source of election data: \href{http://www.nisra.gov.uk}{NISRA}}
+    \item {Source of election data: \href{https://www.nisra.gov.uk}{NISRA}}
     \item {copyright - Contains National Statistics data Crown copyright and database right 2016
     Contains NRS data Crown copyright and database right 2016}
     \item {Perfomed on a Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz/ Debian8}
@@ -72,7 +72,7 @@ Generated on a MacBook Pro (Retina, 13-inch, Mid 2014).}
 \references{
 Panse C (2018). "Rectangular Statistical Cartograms in R: The recmap
 Package." Journal of Statistical Software, Code Snippets, 86(1),
-pp. 1-27. doi: \href{http://dx.doi.org/10.18637/jss.v086.c01}{10.18637/jss.v086.c01}.
+pp. 1-27. \doi{10.18637/jss.v086.c01}.
 }
 
 \examples{

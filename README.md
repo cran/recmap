@@ -4,6 +4,8 @@
 [![Build Status](https://travis-ci.org/cpanse/recmap.svg)](https://travis-ci.org/cpanse/recmap) 
 [![](http://cranlogs.r-pkg.org/badges/grand-total/recmap)](https://cran.r-project.org/package=recmap)
 [![](http://cranlogs.r-pkg.org/badges/recmap)](https://cran.r-project.org/package=recmap) 
+![](https://github.com/cpanse/recmap/workflows/R-CMD-check-recmap/badge.svg)
+[![JSS](https://img.shields.io/badge/JSS-10.18637%2Fjss.v086.c01-brightgreen)](http://dx.doi.org/10.18637/jss.v086.c01)
 
 # recmap - Compute the Rectangular Statistical Cartogram 
 
@@ -26,6 +28,14 @@ and can be installed using the following code
 install.packages('recmap')
 ```
 
+before running `R CMD build` and `R CMD check` or running the shiny demo execute
+```{r}
+pkgs <- c('colorspace', 'doParallel', 'DT', 'knitr', 'maps',
+  'shiny', 'testthat', 'tufte')
+pkgs <- pkgs[(!pkgs %in% unique(installed.packages()[,'Package']))]
+if(length(pkgs) > 0){install.packages(pkgs)}
+```
+
 ## 2. Documentation
 
 The package ships with a package 
@@ -42,18 +52,13 @@ available through [jss.v086.c01](http://dx.doi.org/10.18637/jss.v086.c01).
 Run an interactive shiny application
 
 ```{r}
-# Requires to install suggested  packages
-pkgs <- c('colorspace', 'maps', 'shiny', 'DT')
-pkgs <- pkgs[(!pkgs %in% unique(installed.packages()[,'Package']))]
-if(length(pkgs) > 0){install.packages(pkgs)}
-
 library(shiny)
 recmap_shiny <- system.file('shiny-examples', package = 'recmap')
 shiny::runApp(recmap_shiny, display.mode = 'normal')
 ```
 
 Run the recmap shiny demonstration as a stand-alone application
-using Linux and Apple systems use the `Terminal` application add the following 
+using Linux and macOS systems use the `Terminal` application add the following 
 code to your alias file, e.g., `$HOME/.bashrc`
 
 ```

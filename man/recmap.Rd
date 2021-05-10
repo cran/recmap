@@ -27,7 +27,7 @@ The algorithm requires as input for each map region:
 
 The (x, y) coordinates represent the center of the minimal bounding boxes 
 (MBB), The coordinates of the MBB are derived by adding or subtracting the 
-(dx, dy) / 2 tuple accordingly. The tuple (dx, dy) defines also the ratio of the 
+(dx, dy) / 2 tuple accordingly. The tuple (dx, dy) also defines the ratio of the 
 map region. The statistical values define the desired area of each map region.
 
 The output is a rectangular cartogram where the map regions are:
@@ -99,7 +99,7 @@ The basic idea of the current recmap \emph{implementation}:
 
 Note: if a rectangle can not be placed, accept a non-\emph{feasible solution}
 (avoid solutions having a topology error higher than 100)
-Solving this constellation can be intensive in the computation and due to the
+Solving this constellation can be intensive in the computation, and due to the
 assumably low fitness value the candidate cartogram
 will be likely rejected by the metaheuristic.
 
@@ -110,7 +110,7 @@ time complexity \eqn{O(n)}. For each placement, a constant number of
 MBB intersection are called (max 360). MBB check is implemented using
 \code{std::set}, \code{insert}, \code{upper_bound}, \code{upper_bound} 
 costs are \eqn{O(\log(n))}{O(log(n))}.
-However, worst case for a range query is \eqn{O(n)}, if and only if dx or dy
+However, the worst case for a range query is \eqn{O(n)}, if and only if dx or dy
 cover the whole x or y range. Q.E.D.
 
 
@@ -141,11 +141,11 @@ metaheuristic.
 \item Roland Heilmann, Daniel Keim, Christian Panse, and Mike Sips (2004). 
 "RecMap: Rectangular Map Approximations."
 InfoVis 2004, IEEE Symposium on Information Visualization, Austin, Texas, 33-40.
-doi: \href{http://dx.doi.org/10.1109/INFVIS.2004.57}{10.1109/INFVIS.2004.57}.
+doi: \doi{10.1109/INFVIS.2004.57}.
 
 \item Panse C (2018). "Rectangular Statistical Cartograms in R: The recmap
 Package." Journal of Statistical Software, Code Snippets, 86(1),
-pp. 1-27. doi: \href{http://dx.doi.org/10.18637/jss.v086.c01}{10.18637/jss.v086.c01}.
+pp. 1-27. \doi{10.18637/jss.v086.c01}.
 
 }
 }
