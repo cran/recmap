@@ -39,7 +39,7 @@ Generated on a MacBook Pro (Retina, 13-inch, Mid 2014).}
   \item{Figure 11 -- \code{Switzerland}:
     \itemize{
       \item {input map rectangles derived from:
-    Swiss Federal Office of Topography \url{https://www.swisstopo.admin.ch} using Landscape Models / Boundaries GG25,
+    Swiss Federal Office of Topography using Landscape Models / Boundaries GG25,
     downloaded 2016-05-01; Perfomed on a Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz/ Debian8}
       \item{statistical data: Bundesamt fur Statistik (BFS) \url{https://www.bfs.admin.ch},
     Website Statistik Schweiz, downloaded file \code{je-d-21.03.01.xls} on 2016-05-26.}, 

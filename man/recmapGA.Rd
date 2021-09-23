@@ -88,8 +88,9 @@ function(idxOrder, Map, ...){
 }
 
 
+\dontrun{
 ## use Genetic Algorithms (GA >=3.0.0) as metaheuristic
-set.seed(1)
+set.see(1)
 res <- recmapGA(Map = checkerboard(4), pmutation = 0.25)
 
 op <- par(mfrow = c(1, 3))
@@ -118,7 +119,6 @@ getUS_map <- function(){
   US.Map
 }
 
-\dontrun{
 # takes 34.268 seconds on CRAN
 res <- recmapGA(getUS_map(), maxiter = 5)
 op <- par(ask = TRUE)

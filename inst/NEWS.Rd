@@ -3,6 +3,13 @@
 
 \newcommand{\ghit}{\href{https://github.com/cpanse/recmap/issues/#1}{##1}}
 
+\section{Changes until version 1.0.10 (2021-09-20)}{
+  \itemize{
+    \item url fix in man page urls
+    \item skip recmapGA test case on mac os \href{https://github.com/luca-scr/GA/issues/52}{#52}
+  }
+}
+
 \section{Changes until version 1.0.9 (2021-05-07)}{
   \itemize{
     \item Moving towards defining STRICT_R_HEADERS in Rcpp.h \url{https://github.com/RcppCore/Rcpp/issues/1158} \url{https://github.com/cpanse/recmap/commit/5ae6aade93026b96238804e06593fa9088dda763}

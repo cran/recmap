@@ -77,7 +77,7 @@ op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
 plot(Cartogram.Income <- recmap(M[order(M$x),]),
   col.text = 'black', lwd = 2)
 
-## ----fig.width=8, fig.height=4, fig.align='left', warnings = FALSE, fig.cap="Area ~ mean number of days with minimum temperature below freezing (1931–1960) in capital or large city;"----
+## ----recmapGA, fig.width=8, fig.height=4, fig.align='left', warnings = FALSE, fig.cap="Area ~ mean number of days with minimum temperature below freezing (1931–1960) in capital or large city;", error = TRUE----
 usa$z <- state.x77[, 'Frost'] 
 M <- usa[!usa$name %in% c("Hawaii", "Alaska"), ]
 op <- par(mfrow = c(1 ,1), mar = c(0, 0, 0, 0), bg = NA)
@@ -85,7 +85,7 @@ Frost <- recmapGA(M, seed = 1)
 plot(Frost$Cartogram, 
             col.text = 'black', lwd = 2)
 
-## -------------------------------------------------------------------
+## ----Frost, error=TRUE----------------------------------------------
 summary(Frost)
 
 ## ----eval=FALSE-----------------------------------------------------
