@@ -1,10 +1,10 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/recmap)](https://cran.r-project.org/package=recmap)
 [![Research software impact](http://depsy.org/api/package/cran/recmap/badge.svg)](http://depsy.org/package/r/recmap)
-[![Build Status](https://travis-ci.org/cpanse/recmap.svg)](https://travis-ci.org/cpanse/recmap) 
 [![](http://cranlogs.r-pkg.org/badges/grand-total/recmap)](https://cran.r-project.org/package=recmap)
 [![](http://cranlogs.r-pkg.org/badges/recmap)](https://cran.r-project.org/package=recmap) 
 ![](https://github.com/cpanse/recmap/workflows/R-CMD-check-recmap/badge.svg)
 [![JSS](https://img.shields.io/badge/JSS-10.18637%2Fjss.v086.c01-brightgreen)](http://dx.doi.org/10.18637/jss.v086.c01)
+[![codecov](https://codecov.io/github/cpanse/recmap/branch/master/graph/badge.svg?token=QbuhWl5bx5)](https://codecov.io/github/cpanse/recmap)
 
 # recmap - Compute the Rectangular Statistical Cartogram 
 
