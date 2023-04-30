@@ -1,7 +1,7 @@
 Package: recmap
 Type: Package
 Title: Compute the Rectangular Statistical Cartogram
-Version: 1.0.14
+Version: 1.0.15
 Authors@R: person("Christian", "Panse", 
 		email = "Christian.Panse@gmail.com", 
 		role = c("aut", "cre"),
@@ -24,7 +24,7 @@ VignetteBuilder: knitr
 NeedsCompilation: yes
 BugReports: https://github.com/cpanse/recmap/issues
 Encoding: UTF-8
-Packaged: 2023-04-23 13:27:25 UTC; cpanse
+Packaged: 2023-04-29 08:45:32 UTC; cpanse
 Author: Christian Panse [aut, cre] (<https://orcid.org/0000-0003-1975-3064>)
 Repository: CRAN
-Date/Publication: 2023-04-23 21:40:02 UTC
+Date/Publication: 2023-04-30 10:50:02 UTC
